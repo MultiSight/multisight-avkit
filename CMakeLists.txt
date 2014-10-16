@@ -14,8 +14,8 @@ set(SOURCES source/ARGB24ToYUV420P.cpp
             source/Utils.cpp
             source/YUV420PToARGB24.cpp)
 
-set(WINDOWS_LIBS XSDK ws2_32 avutil-54 avcodec-56 avformat-56 avfilter-5 swscale-3 avutil-54)
-set(LINUX_LIBS XSDK avutil avcodec avformat swscale)
+set(WINDOWS_LIBS XSDK ws2_32 avcodec avformat swscale avfilter avutil)
+set(LINUX_LIBS XSDK avcodec avformat swscale avfilter avutil)
 
 #if(CMAKE_SYSTEM MATCHES "Linux-")
 #    include_directories(/usr/include/ffmpeg)
