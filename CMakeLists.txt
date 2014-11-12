@@ -17,10 +17,6 @@ set(SOURCES source/ARGB24ToYUV420P.cpp
 set(WINDOWS_LIBS XSDK ws2_32 avcodec avformat swscale avfilter avutil)
 set(LINUX_LIBS XSDK avcodec avformat swscale avfilter avutil)
 
-#if(CMAKE_SYSTEM MATCHES "Linux-")
-#    include_directories(/usr/include/ffmpeg)
-#endif(CMAKE_SYSTEM MATCHES "Linux-")
-
 add_definitions(-D__STDC_CONSTANT_MACROS)
 
 include(common.cmake NO_POLICY_SCOPE)
