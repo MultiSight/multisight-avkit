@@ -3,7 +3,7 @@
 #define __AVKit_H264Encoder_h
 
 #include "AVKit/Options.h"
-
+#include "AVKit/FrameTypes.h"
 #include "XSDK/XMemory.h"
 
 extern "C"
@@ -20,13 +20,6 @@ class H264Encoder
 {
 public:
 
-    X_API enum H264EncoderFrameType
-    {
-        FRAME_TYPE_KEY,
-        FRAME_TYPE_PARTIAL,
-        FRAME_TYPE_AUTO_GOP
-    };
-
     X_API H264Encoder( const struct CodecOptions& options,
                        bool annexB = true,
                        int encodeAttempts = H264_ENCODE_ATTEMPTS );
@@ -36,13 +29,13 @@ public:
     /// Encode the YUV420P image pointed to by pic into an H.264 frame, writing the output frame
     /// to the memory pointed to by output.
     X_API size_t EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
-                                H264EncoderFrameType type = FRAME_TYPE_AUTO_GOP );
+                                FrameType type = FRAME_TYPE_AUTO_GOP );
 
     /// A convenience method that wraps the functionaliy provided above but takes and returns
     /// XMemory objects. (note: because this method allocates memory, it is not quite as efficient
     /// as the above method).
     X_API XIRef<XSDK::XMemory> EncodeYUV420P( XIRef<XSDK::XMemory> pic,
-                                              H264EncoderFrameType type = FRAME_TYPE_AUTO_GOP );
+                                              FrameType type = FRAME_TYPE_AUTO_GOP );
 
     X_API bool LastWasKey() const { return _lastWasKey; }
 

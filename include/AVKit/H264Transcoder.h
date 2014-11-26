@@ -7,6 +7,7 @@
 #include "AVKit/H264Encoder.h"
 #include "AVKit/AVMuxer.h"
 #include "AVKit/Options.h"
+#include "AVKit/FrameTypes.h"
 
 namespace AVKit
 {
@@ -52,7 +53,7 @@ public:
     X_API void EncodeYUV420PAndMux( H264Encoder& encoder,
                                     AVMuxer& muxer,
                                     XIRef<XSDK::XMemory> pic,
-                                    H264Encoder::H264EncoderFrameType type = H264Encoder::FRAME_TYPE_AUTO_GOP );
+                                    AVKit::FrameType type = AVKit::FRAME_TYPE_AUTO_GOP );
 
     X_API static int64_t ComputeNumOutputFrames( int64_t numInputFrames,
                                                  int inputTimeBaseNum, int inputTimeBaseDen,

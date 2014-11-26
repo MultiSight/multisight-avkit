@@ -132,7 +132,7 @@ H264Encoder::~H264Encoder() throw()
 }
 
 size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
-                                   H264EncoderFrameType type )
+                                   FrameType type )
 {
     AVFrame frame;
     avcodec_get_frame_defaults( &frame );
@@ -194,7 +194,7 @@ size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
 }
 
 XIRef<XMemory> H264Encoder::EncodeYUV420P( XIRef<XMemory> pic,
-                                           H264EncoderFrameType type )
+                                           FrameType type )
 {
     XIRef<XMemory> frame = new XMemory( DEFAULT_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
 

@@ -24,7 +24,7 @@ H264Transcoder::H264Transcoder( int inputTimeBaseNum, int inputTimeBaseDen,
 void H264Transcoder::EncodeYUV420PAndMux( H264Encoder& encoder,
                                           AVMuxer& muxer,
                                           XIRef<XSDK::XMemory> pic,
-                                          H264Encoder::H264EncoderFrameType type )
+                                          AVKit::FrameType type )
 {
     XIRef<XSDK::XMemory> encodeBuffer = encoder.EncodeYUV420P( pic, type );
 
