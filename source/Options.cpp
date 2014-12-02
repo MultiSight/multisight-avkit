@@ -16,7 +16,7 @@ struct CodecOptions GetFastH264DecoderOptions()
     return options;
 }
 
-struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen )
+struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath )
 {
     struct CodecOptions options;
 
@@ -35,11 +35,13 @@ struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int pi
     options.profile = "baseline";
     options.preset = "ultrafast";
     options.tune = "zerolatency";
+    if( devicePath.length() > 0 )
+        options.device_path = devicePath;
 
     return options;
 }
 
-struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen )
+struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath )
 {
     struct CodecOptions options;
 
@@ -54,11 +56,13 @@ struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int pic
     options.preset = "ultrafast";
     options.tune = "zerolatency";
     options.x264opts = XString::Format("no-scenecut:vbv-maxrate=%d:vbv-bufsize=%d", bitRate / 1000, bitRate / 1000);
+    if( devicePath.length() > 0 )
+        options.device_path = devicePath;
 
     return options;
 }
 
-struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen )
+struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath )
 {
     struct CodecOptions options;
 
@@ -71,6 +75,8 @@ struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWi
     options.delay = 0;
     options.thread_count = 6;
     options.tune = "zerolatency";
+    if( devicePath.length() > 0 )
+        options.device_path = devicePath;
 
     return options;
 }

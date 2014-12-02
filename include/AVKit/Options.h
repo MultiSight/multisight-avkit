@@ -29,7 +29,7 @@ struct CodecOptions
     XSDK::XNullable<XSDK::XString> preset;
     XSDK::XNullable<XSDK::XString> tune;
     XSDK::XNullable<XSDK::XString> x264opts;
-
+    XSDK::XNullable<XSDK::XString> device_path;
     // From here on these options do not correspond to AVCodecContext fields.
 
     XSDK::XNullable<bool> jpeg_source; // Enables YUVJ420P scaler context output. Set this to true if you're going to
@@ -38,11 +38,11 @@ struct CodecOptions
 
 X_API struct CodecOptions GetFastH264DecoderOptions();
 
-X_API struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen );
+X_API struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
-X_API struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen );
+X_API struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
-X_API struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen );
+X_API struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
 X_API const int DEFAULT_JPEG_BIT_RATE = 100000;
 X_API const int DEFAULT_JPEG_QMIN = 8;
