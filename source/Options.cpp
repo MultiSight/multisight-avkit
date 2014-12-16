@@ -6,12 +6,19 @@ using namespace XSDK;
 namespace AVKit
 {
 
-struct CodecOptions GetFastH264DecoderOptions()
+struct CodecOptions GetFastH264DecoderOptions( const XSDK::XString& devicePath )
 {
     struct CodecOptions options;
 
-    options.thread_count = 2;
-    options.tune = "zerolatency";
+    if( devicePath.length() > 0 )
+    {
+        options.device_path = devicePath;
+    }
+    else
+    {
+        options.thread_count = 2;
+        options.tune = "zerolatency";
+    }
 
     return options;
 }

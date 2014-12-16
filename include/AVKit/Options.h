@@ -36,7 +36,7 @@ struct CodecOptions
                                        // use this decoder for making thumbnails.
 };
 
-X_API struct CodecOptions GetFastH264DecoderOptions();
+X_API struct CodecOptions GetFastH264DecoderOptions( const XSDK::XString& devicePath = "" );
 
 X_API struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
