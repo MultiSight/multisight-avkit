@@ -4,6 +4,7 @@
 
 #include "AVKit/Options.h"
 #include "AVKit/AVDeMuxer.h"
+#include "AVKit/Decoder.h"
 
 #include "XSDK/Types.h"
 #include "XSDK/XMemory.h"
@@ -19,28 +20,28 @@ namespace AVKit
 
 const int H264_DECODE_ATTEMPTS = 16;
 
-class H264Decoder
+class H264Decoder : public Decoder
 {
 public:
     X_API H264Decoder( const struct CodecOptions& options, int decodeAttempts = H264_DECODE_ATTEMPTS );
     X_API H264Decoder( AVDeMuxer& deMuxer, const struct CodecOptions& options, int decodeAttempts = H264_DECODE_ATTEMPTS );
     X_API virtual ~H264Decoder() throw();
 
-    X_API void Decode( uint8_t* frame, size_t frameSize );
-    X_API void Decode( XIRef<XSDK::XMemory> frame );
+    X_API virtual void Decode( uint8_t* frame, size_t frameSize );
+    X_API virtual void Decode( XIRef<XSDK::XMemory> frame );
 
-    X_API uint16_t GetInputWidth() const;
-    X_API uint16_t GetInputHeight() const;
+    X_API virtual uint16_t GetInputWidth() const;
+    X_API virtual uint16_t GetInputHeight() const;
 
-    X_API void SetOutputWidth( uint16_t outputWidth );
-    X_API uint16_t GetOutputWidth() const;
+    X_API virtual void SetOutputWidth( uint16_t outputWidth );
+    X_API virtual uint16_t GetOutputWidth() const;
 
-    X_API void SetOutputHeight( uint16_t outputHeight );
-    X_API uint16_t GetOutputHeight() const;
+    X_API virtual void SetOutputHeight( uint16_t outputHeight );
+    X_API virtual uint16_t GetOutputHeight() const;
 
-    X_API size_t GetYUV420PSize() const;
-    X_API void MakeYUV420P( uint8_t* dest );
-    X_API XIRef<XSDK::XMemory> MakeYUV420P();
+    X_API virtual size_t GetYUV420PSize() const;
+    X_API virtual void MakeYUV420P( uint8_t* dest );
+    X_API virtual XIRef<XSDK::XMemory> MakeYUV420P();
 
 private:
     H264Decoder( const H264Decoder& obj );
