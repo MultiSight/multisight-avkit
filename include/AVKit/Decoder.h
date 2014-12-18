@@ -11,6 +11,8 @@ namespace AVKit
 class Decoder
 {
 public:
+    X_API virtual ~Decoder() throw() {}
+
     X_API virtual void Decode( uint8_t* frame, size_t frameSize ) = 0;
     X_API virtual void Decode( XIRef<XSDK::XMemory> frame ) = 0;
 

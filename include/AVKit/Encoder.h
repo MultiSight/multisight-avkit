@@ -11,6 +11,8 @@ namespace AVKit
 class Encoder
 {
 public:
+    X_API virtual ~Encoder() throw() {}
+
     X_API virtual size_t EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
                                         FrameType type = FRAME_TYPE_AUTO_GOP ) = 0;
 
