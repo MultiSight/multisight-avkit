@@ -79,6 +79,8 @@ public:
     X_API void GetFrame( uint8_t* dest ) const;
     X_API XIRef<XSDK::XMemory> GetFrame() const;
 
+    X_API AVFormatContext* GetFormatContext() const;
+
     X_API static XIRef<XSDK::XMemory> LoadFile( const XSDK::XString& fileName );
 
     X_API static struct StreamStatistics GetVideoStreamStatistics( const XSDK::XString& fileName );

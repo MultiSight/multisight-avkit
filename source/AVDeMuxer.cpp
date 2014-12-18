@@ -196,6 +196,11 @@ void AVDeMuxer::GetFrame( uint8_t* dest ) const
     else memcpy( dest, _deMuxPkt.data, _deMuxPkt.size );
 }
 
+AVFormatContext* AVDeMuxer::GetFormatContext() const
+{
+    return _context;
+}
+
 XIRef<XMemory> AVDeMuxer::GetFrame() const
 {
     XIRef<XMemory> frame = new XMemory;
