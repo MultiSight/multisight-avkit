@@ -16,6 +16,7 @@ struct CodecOptions
     XSDK::XNullable<int> height;
     XSDK::XNullable<int> time_base_num;
     XSDK::XNullable<int> time_base_den;
+    XSDK::XNullable<int> initial_qp;
     XSDK::XNullable<int> me_method;
     XSDK::XNullable<int> me_subpel_quality;
     XSDK::XNullable<int> delay;
@@ -40,7 +41,7 @@ X_API struct CodecOptions GetFastH264DecoderOptions( const XSDK::XString& device
 
 X_API struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
-X_API struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
+X_API struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "", int initialQP = -1 );
 
 X_API struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 

@@ -48,7 +48,7 @@ struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, int pi
     return options;
 }
 
-struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath )
+struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath, int initialQP )
 {
     struct CodecOptions options;
 
@@ -58,6 +58,8 @@ struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int pic
     options.height = picHeight;
     options.time_base_num = timeBaseNum;
     options.time_base_den = timeBaseDen;
+    if( initialQP != -1 )
+        options.initial_qp = initialQP;
     options.delay = 0;
     options.thread_count = 6;
     options.preset = "ultrafast";
