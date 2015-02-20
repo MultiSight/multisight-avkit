@@ -1,17 +1,4 @@
 
-//=============================================================================
-//Copyright (c) 2013 Pelco. All rights reserved.
-//
-// This file contains trade secrets of Pelco.  No part may be reproduced or
-// transmitted in any form by any means or for any purpose without the express
-// written permission of Pelco.
-//
-// $File: H264EncoderTest.cpp $
-// $Revision:$
-// $Date:$ 11/15/2013
-// $Author: Tony Di Croce $
-//=============================================================================
-
 #include "H264EncoderTest.h"
 #include "AVKit/H264Encoder.h"
 #include "AVKit/H264Decoder.h"

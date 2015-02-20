@@ -1,17 +1,4 @@
 
-//=============================================================================
-// Copyright (c) 2013 Pelco. All rights reserved.
-//
-// This file contains trade secrets of Pelco.  No part may be reproduced or
-// transmitted in any form by any means or for any purpose without the express
-// written permission of Pelco.
-//
-// $File: H264EncoderTest.h $
-// $Revision:$
-// $Date:$ 11/15/2013
-// $Author: Tony Di Croce $
-//=============================================================================
-
 #ifndef _H264EncoderTest_H_
 #define _H264EncoderTest_H_
 
