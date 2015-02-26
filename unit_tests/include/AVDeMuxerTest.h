@@ -1,32 +1,23 @@
 
-#ifndef _AVDeMuxerTest_H_
-#define _AVDeMuxerTest_H_
+#include "framework.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "XSDK/XMemory.h"
-
-class AVDeMuxerTest : public CppUnit::TestFixture
+class AVDeMuxerTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(AVDeMuxerTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestExamineFile);
-        CPPUNIT_TEST(TestFileFromMemory);
-        CPPUNIT_TEST(TestGetContainerStatistics);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(AVDeMuxerTest);
+        TEST(AVDeMuxerTest::TestConstructor);
+        TEST(AVDeMuxerTest::TestExamineFile);
+        TEST(AVDeMuxerTest::TestFileFromMemory);
+        TEST(AVDeMuxerTest::TestGetContainerStatistics);
+    TEST_SUITE_END();
 
     virtual ~AVDeMuxerTest() throw() {}
 
-    void setUp();
-    void tearDown();
+    void setup();
+    void teardown();
 
-protected:
     void TestConstructor();
     void TestExamineFile();
     void TestFileFromMemory();
     void TestGetContainerStatistics();
 };
-
-#endif
-

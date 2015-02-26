@@ -31,7 +31,8 @@ AVMuxer::AVMuxer( const struct CodecOptions& options,
     _oweTrailer( false ),
     _numVideoFramesWritten( 0 ),
     _isTS( _fileName.ToLower().EndsWith( ".ts" ) ),
-    _fileNum( 0 )
+    _fileNum( 0 ),
+    _pf( new PacketFactoryDefault() )
 {
     _context = avformat_alloc_context();
     if( !_context )
@@ -98,7 +99,7 @@ void AVMuxer::SetExtraData( XIRef<XSDK::XMemory> extraData )
     }
 }
 
-void AVMuxer::WriteVideoFrame( uint8_t* data, size_t size, bool keyFrame )
+void AVMuxer::WriteVideoPacket( XIRef<Packet> input, bool keyFrame )
 {
     if( _context->pb == NULL )
         _OpenIO();
@@ -131,8 +132,8 @@ void AVMuxer::WriteVideoFrame( uint8_t* data, size_t size, bool keyFrame )
     av_init_packet( &pkt );
 
     pkt.stream_index = _stream->index;
-    pkt.data = data;
-    pkt.size = size;
+    pkt.data = input->Map();
+    pkt.size = input->GetDataSize();
 
     pkt.pts = _ts;
     pkt.dts = _ts;
@@ -145,11 +146,6 @@ void AVMuxer::WriteVideoFrame( uint8_t* data, size_t size, bool keyFrame )
         X_THROW(("Unable to write video frame."));
 
     _numVideoFramesWritten++;
-}
-
-void AVMuxer::WriteVideoFrame( XIRef<XMemory> frame, bool keyFrame )
-{
-    WriteVideoFrame( frame->Map(), frame->GetDataSize(), keyFrame );
 }
 
 void AVMuxer::Flush()

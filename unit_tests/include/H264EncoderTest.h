@@ -1,33 +1,25 @@
 
-#ifndef _H264EncoderTest_H_
-#define _H264EncoderTest_H_
+#include "framework.h"
+#include "AVKit/Packet.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "XSDK/XMemory.h"
-
-class H264EncoderTest : public CppUnit::TestFixture
+class H264EncoderTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(H264EncoderTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestEncodeKey);
-        CPPUNIT_TEST(TestEncodeGOP);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(H264EncoderTest);
+        TEST(H264EncoderTest::TestConstructor);
+        TEST(H264EncoderTest::TestEncodeKey);
+        TEST(H264EncoderTest::TestEncodeGOP);
+    TEST_SUITE_END();
 
-    virtual ~H264EncoderTest() throw()
-    {}
+    virtual ~H264EncoderTest() throw() {}
 
-    void setUp();
-    void tearDown();
+    void setup();
+    void teardown();
 
-protected:
     void TestConstructor();
     void TestEncodeKey();
     void TestEncodeGOP();
+
 private:
-    XIRef<XSDK::XMemory> _pic;
+    XIRef<AVKit::Packet> _pic;
 };
-
-#endif
-

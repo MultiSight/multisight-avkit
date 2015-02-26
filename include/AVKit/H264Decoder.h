@@ -15,9 +15,9 @@
 #include "AVKit/Options.h"
 #include "AVKit/AVDeMuxer.h"
 #include "AVKit/Decoder.h"
+#include "AVKit/Packet.h"
 
 #include "XSDK/Types.h"
-#include "XSDK/XMemory.h"
 
 extern "C"
 {
@@ -37,8 +37,9 @@ public:
     X_API H264Decoder( AVDeMuxer& deMuxer, const struct CodecOptions& options, int decodeAttempts = H264_DECODE_ATTEMPTS );
     X_API virtual ~H264Decoder() throw();
 
-    X_API virtual void Decode( uint8_t* frame, size_t frameSize );
-    X_API virtual void Decode( XIRef<XSDK::XMemory> frame );
+    X_API void SetPacketFactory( XIRef<PacketFactory> pf ) { _pf = pf; }
+
+    X_API virtual void Decode( XIRef<Packet> frame );
 
     X_API virtual uint16_t GetInputWidth() const;
     X_API virtual uint16_t GetInputHeight() const;
@@ -49,9 +50,7 @@ public:
     X_API virtual void SetOutputHeight( uint16_t outputHeight );
     X_API virtual uint16_t GetOutputHeight() const;
 
-    X_API virtual size_t GetYUV420PSize() const;
-    X_API virtual void MakeYUV420P( uint8_t* dest );
-    X_API virtual XIRef<XSDK::XMemory> MakeYUV420P();
+    X_API virtual XIRef<Packet> Get();
 
 private:
     H264Decoder( const H264Decoder& obj );
@@ -66,8 +65,8 @@ private:
     SwsContext* _scaler;
     uint16_t _outputWidth;
     uint16_t _outputHeight;
-
     int _decodeAttempts;
+    XIRef<PacketFactory> _pf;
 };
 
 }

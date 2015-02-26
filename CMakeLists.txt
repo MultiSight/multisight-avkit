@@ -12,7 +12,9 @@ set(SOURCES source/ARGB24ToYUV420P.cpp
             source/Locky.cpp
             source/Options.cpp
             source/Utils.cpp
-            source/YUV420PToARGB24.cpp)
+            source/YUV420PToARGB24.cpp
+            source/Packet.cpp
+            source/PacketFactory.cpp)
 
 set(WINDOWS_LIBS XSDK ws2_32 avcodec avformat swscale avfilter avutil)
 set(LINUX_LIBS XSDK avcodec avformat swscale avfilter avutil)

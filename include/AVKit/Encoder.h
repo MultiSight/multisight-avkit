@@ -13,6 +13,7 @@
 #define __AVKit_Encoder_h
 
 #include "AVKit/FrameTypes.h"
+#include "AVKit/Packet.h"
 #include "XSDK/XMemory.h"
 
 namespace AVKit
@@ -23,11 +24,9 @@ class Encoder
 public:
     X_API virtual ~Encoder() throw() {}
 
-    X_API virtual size_t EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
-                                        FrameType type = FRAME_TYPE_AUTO_GOP ) = 0;
+    X_API virtual void EncodeYUV420P( XIRef<Packet> input, FrameType type = FRAME_TYPE_AUTO_GOP ) = 0;
 
-    X_API virtual XIRef<XSDK::XMemory> EncodeYUV420P( XIRef<XSDK::XMemory> pic,
-                                                      FrameType type = FRAME_TYPE_AUTO_GOP ) = 0;
+    X_API virtual XIRef<Packet> Get() = 0;
 
     X_API virtual bool LastWasKey() const = 0;
 

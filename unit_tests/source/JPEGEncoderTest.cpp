@@ -3,7 +3,6 @@
 #include "AVKit/JPEGEncoder.h"
 #include "AVKit/Locky.h"
 #include "AVKit/Options.h"
-#include "XSDK/XRef.h"
 #include "XSDK/XMemory.h"
 
 extern "C"
@@ -18,44 +17,38 @@ using namespace std;
 using namespace XSDK;
 using namespace AVKit;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(JPEGEncoderTest);
+REGISTER_TEST_FIXTURE(JPEGEncoderTest);
 
-void JPEGEncoderTest::setUp()
+void JPEGEncoderTest::setup()
 {
-    av_register_all();
     Locky::RegisterFFMPEG();
 
     // pic_0 comes from the above included file pic.c
-    _pic = new XMemory;
-    memcpy( &_pic->Extend( pic_0_len ), pic_0, pic_0_len );
+    _pic = new Packet( pic_0, pic_0_len );
 }
 
-void JPEGEncoderTest::tearDown()
+void JPEGEncoderTest::teardown()
 {
     Locky::UnregisterFFMPEG();
 }
 
 void JPEGEncoderTest::TestConstructor()
 {
-    printf("JPEGEncoderTest::TestConstructor()\n");
-    fflush(stdout);
-
-    CPPUNIT_ASSERT_NO_THROW( XRef<JPEGEncoder> e = new JPEGEncoder( GetJPEGOptions( 1280, 720 ) ) );
+    XRef<JPEGEncoder> e;
+    UT_ASSERT_NO_THROW( e = new JPEGEncoder( GetJPEGOptions( 1280, 720 ) ) );
 }
 
 void JPEGEncoderTest::TestEncode()
 {
-    printf("JPEGEncoderTest::TestEncode()\n");
-    fflush(stdout);
-
     XRef<JPEGEncoder> e;
-    CPPUNIT_ASSERT_NO_THROW( e = new JPEGEncoder( GetJPEGOptions( 1280, 720 ) ) );
+    UT_ASSERT_NO_THROW( e = new JPEGEncoder( GetJPEGOptions( 1280, 720 ) ) );
 
-    XIRef<XMemory> jpeg = e->EncodeYUV420P( _pic );
+    e->EncodeYUV420P( _pic );
+    XIRef<Packet> jpeg = e->Get();
 
-    CPPUNIT_ASSERT( jpeg->GetDataSize() > 0 );
+    UT_ASSERT( jpeg->GetDataSize() > 0 );
 
-#if 0 // To verify that jpeg contains a valid jpeg, enable this block of code.
-    JPEGEncoder::WriteJPEGFile( "out.jpg", jpeg );
+#if 1 // To verify that jpeg contains a valid jpeg, enable this block of code.
+    JPEGEncoder::WriteJPEGFile( "outy.jpg", jpeg );
 #endif
 }

@@ -1,32 +1,24 @@
 
-#ifndef _AVMuxerTest_H_
-#define _AVMuxerTest_H_
+#include "framework.h"
+#include "AVKit/Packet.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "XSDK/XMemory.h"
-
-class AVMuxerTest : public CppUnit::TestFixture
+class AVMuxerTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(AVMuxerTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestMP4);
-        CPPUNIT_TEST(TestReContainerize);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(AVMuxerTest);
+        TEST(AVMuxerTest::TestConstructor);
+        TEST(AVMuxerTest::TestMP4);
+        TEST(AVMuxerTest::TestRecontainerize);
+    TEST_SUITE_END();
 
     virtual ~AVMuxerTest() throw() {}
 
-    void setUp();
-    void tearDown();
+    void setup();
+    void teardown();
 
-protected:
     void TestConstructor();
     void TestMP4();
-    void TestReContainerize();
+    void TestRecontainerize();
 private:
-    XIRef<XSDK::XMemory> _pic;
+    XIRef<AVKit::Packet> _pic;
 };
-
-#endif
-

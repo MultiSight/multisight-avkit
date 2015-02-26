@@ -13,7 +13,8 @@
 #define __AVKit_JPEGEncoder_h
 
 #include "AVKit/Options.h"
-
+#include "AVKit/Packet.h"
+#include "AVKit/PacketFactory.h"
 #include "XSDK/XMemory.h"
 
 extern "C"
@@ -33,11 +34,13 @@ public:
 
     X_API virtual ~JPEGEncoder() throw();
 
-    X_API size_t EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize );
+    X_API void SetPacketFactory( XIRef<PacketFactory> pf ) { _pf = pf; }
 
-    X_API XIRef<XSDK::XMemory> EncodeYUV420P( XIRef<XSDK::XMemory> pic );
+    X_API void EncodeYUV420P( XIRef<Packet> input );
 
-    X_API static void WriteJPEGFile( const XSDK::XString& fileName, XIRef<XSDK::XMemory> jpeg );
+    X_API XIRef<Packet> Get();
+
+    X_API static void WriteJPEGFile( const XSDK::XString& fileName, XIRef<Packet> jpeg );
 
 private:
     JPEGEncoder( const JPEGEncoder& obj );
@@ -47,6 +50,8 @@ private:
     AVCodecContext* _context;
     struct CodecOptions _options;
     int _encodeAttempts;
+    XIRef<Packet> _output;
+    XIRef<PacketFactory> _pf;
 };
 
 }

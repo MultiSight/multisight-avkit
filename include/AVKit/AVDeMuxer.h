@@ -12,6 +12,8 @@
 #ifndef __AVKit_AVDeMuxer_h
 #define __AVKit_AVDeMuxer_h
 
+#include "AVKit/Packet.h"
+#include "AVKit/PacketFactory.h"
 #include "XSDK/XMemory.h"
 #include "XSDK/XNullable.h"
 #include <utility>
@@ -63,14 +65,12 @@ class AVDeMuxer
 
 public:
     X_API AVDeMuxer( const XSDK::XString& fileName, bool annexBFilter = true );
-
-    X_API AVDeMuxer( const uint8_t* buffer,
-                     size_t bufferSize,
-                     bool annexBFilter = true );
-
+    X_API AVDeMuxer( const uint8_t* buffer, size_t bufferSize, bool annexBFilter = true );
     X_API AVDeMuxer( XIRef<XSDK::XMemory> buffer, bool annexBFilter = true );
 
     X_API virtual ~AVDeMuxer() throw();
+
+    X_API void SetPacketFactory( XIRef<PacketFactory> pf ) { _pf = pf; }
 
     X_API XSDK::XString GetFileName() const;
 
@@ -85,9 +85,7 @@ public:
     X_API bool EndOfFile() const;
     X_API bool IsKey() const;
 
-    X_API size_t GetFrameSize() const;
-    X_API void GetFrame( uint8_t* dest ) const;
-    X_API XIRef<XSDK::XMemory> GetFrame() const;
+    X_API XIRef<Packet> Get();
 
     X_API AVFormatContext* GetFormatContext() const;
 
@@ -123,7 +121,7 @@ private:
     int _videoStreamIndex;
     int _audioPrimaryStreamIndex;
     AVBitStreamFilterContext* _bsfc;
-    bool _firstFrame;
+    XIRef<PacketFactory> _pf;
 };
 
 }

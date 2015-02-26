@@ -30,6 +30,7 @@ class Locky
 public:
     X_API static void RegisterFFMPEG();
     X_API static void UnregisterFFMPEG();
+
 private:
     Locky();
     Locky( const Locky& obj );

@@ -24,7 +24,8 @@ using namespace XSDK;
 #define CLIP(val,min,max) (val<min)?min:(val>max)?max:val
 
 YUV420PToARGB24::YUV420PToARGB24() :
-    _rgb24()
+    _rgb24(),
+    _pf( new PacketFactoryDefault() )
 {
 }
 
@@ -32,13 +33,15 @@ YUV420PToARGB24::~YUV420PToARGB24() throw()
 {
 }
 
-void YUV420PToARGB24::Transform( uint8_t* src, size_t width, size_t height )
+void YUV420PToARGB24::Transform( XIRef<Packet> input, size_t width, size_t height )
 {
-    _rgb24 = new XMemory;
+    size_t dataSize = height * (width*4);
+    _rgb24 = _pf->Get( dataSize );
+    _rgb24->SetDataSize( dataSize );
 
-    uint8_t* dst = &_rgb24->Extend( height * (width*4) );
+    uint8_t* dst = _rgb24->Map();
 
-    const uint8_t* srcY = src;
+    const uint8_t* srcY = input->Map();
     const uint8_t* srcU = srcY + (width*height);
     const uint8_t* srcV = srcU + ((width/2)*(height/2));
 
@@ -74,22 +77,7 @@ void YUV420PToARGB24::Transform( uint8_t* src, size_t width, size_t height )
     }
 }
 
-void YUV420PToARGB24::Transform( XIRef<XMemory> src, size_t width, size_t height )
+XIRef<Packet> YUV420PToARGB24::Get()
 {
-    Transform( src->Map(), width, height );
-}
-
-size_t YUV420PToARGB24::GetARGB24Size() const
-{
-    return _rgb24->GetDataSize();
-}
-
-void YUV420PToARGB24::GetARGB24( uint8_t* dest ) const
-{
-    memcpy( dest, _rgb24->Map(), _rgb24->GetDataSize() );
-}
-
-XIRef<XSDK::XMemory> YUV420PToARGB24::GetARGB24() const
-{
-    return _rgb24->Clone();
+    return _rgb24;
 }
