@@ -25,13 +25,15 @@ class Packet : public XSDK::XBaseObject
     friend class ::PacketTest;
 
 public:
-    Packet( size_t sz );
+    Packet( size_t sz = 0 );
     Packet( uint8_t* src, size_t sz, bool owning = true );
     Packet( const Packet& obj );
 
     virtual ~Packet() throw();
 
     Packet& operator = ( const Packet& obj );
+
+    void Config( uint8_t* src, size_t sz, bool owning = true );
 
     uint8_t* Map() const;
 

@@ -150,3 +150,41 @@ void PacketTest::TestCopyAssignment()
     for( size_t i = 0; i < 16384; i++ )
         UT_ASSERT( pktB._buffer[i] == 42 );
 }
+
+void PacketTest::TestConfigOwning()
+{
+    uint8_t foreignBuffer[16384];
+    for( size_t i = 0; i < 16384; i++ )
+        foreignBuffer[i] = 42;
+
+    Packet pktA;
+    pktA.Config( foreignBuffer, 16384 );
+
+    uint8_t* cmp = pktA.Map();
+
+    for( int i = 0; i < 16384; i++ )
+    {
+        UT_ASSERT( cmp != &foreignBuffer[i] );
+        UT_ASSERT( *cmp == foreignBuffer[i] );
+        cmp++;
+    }
+}
+
+void PacketTest::TestConfigNonOwning()
+{
+    uint8_t foreignBuffer[16384];
+    for( size_t i = 0; i < 16384; i++ )
+        foreignBuffer[i] = 42;
+
+    Packet pktA;
+    pktA.Config( foreignBuffer, 16384, false );
+
+    uint8_t* cmp = pktA.Map();
+
+    for( int i = 0; i < 16384; i++ )
+    {
+        UT_ASSERT( cmp == &foreignBuffer[i] );
+        UT_ASSERT( *cmp == foreignBuffer[i] );
+        cmp++;
+    }
+}

@@ -11,6 +11,8 @@ public:
         TEST(PacketTest::TestCopyCTOROwning);
         TEST(PacketTest::TestCopyCTORNonOwning);
         TEST(PacketTest::TestCopyAssignment);
+        TEST(PacketTest::TestConfigOwning);
+        TEST(PacketTest::TestConfigNonOwning);
     TEST_SUITE_END();
 
     virtual ~PacketTest() throw() {}
@@ -24,4 +26,6 @@ public:
     void TestCopyCTOROwning();
     void TestCopyCTORNonOwning();
     void TestCopyAssignment();
+    void TestConfigOwning();
+    void TestConfigNonOwning();
 };

@@ -22,9 +22,12 @@ Packet::Packet( size_t sz ) :
     _ticksInSecond( 90000 ),
     _key( false )
 {
-    _buffer = (uint8_t*)av_malloc( _bufferSize );
-    if( !_buffer )
-        X_THROW(("Unable to allocate packet buffer."));
+    if( _bufferSize > 0 )
+    {
+        _buffer = (uint8_t*)av_malloc( _bufferSize );
+        if( !_buffer )
+            X_THROW(("Unable to allocate packet buffer."));
+    }
 }
 
 Packet::Packet( uint8_t* src, size_t sz, bool owning ) :
@@ -117,6 +120,33 @@ Packet& Packet::operator = ( const Packet& obj )
     _key = obj._key;
 
     return *this;
+}
+
+void Packet::Config( uint8_t* src, size_t sz, bool owning )
+{
+    _Clear();
+
+    _bufferSize = sz;
+    _requestedSize = sz;
+    _owning = owning;
+    _dataSize = sz;
+
+    if( _owning )
+    {
+        _buffer = (uint8_t*)av_malloc( _bufferSize );
+        if( !_buffer )
+            X_THROW(("Unable to allocate packet buffer."));
+
+        memcpy( _buffer, src, _bufferSize );
+    }
+    else
+    {
+        _buffer = src;
+    }
+
+    _ts = 0;
+    _ticksInSecond = 90000;
+    _key = false;
 }
 
 uint8_t* Packet::Map() const
