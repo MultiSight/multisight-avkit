@@ -23,6 +23,8 @@ using namespace XSDK;
 
 #define CLIP(val,min,max) (val<min)?min:(val>max)?max:val
 
+static const size_t DEFAULT_PADDING = 16;
+
 YUV420PToARGB24::YUV420PToARGB24() :
     _rgb24(),
     _pf( new PacketFactoryDefault() )
@@ -36,7 +38,7 @@ YUV420PToARGB24::~YUV420PToARGB24() throw()
 void YUV420PToARGB24::Transform( XIRef<Packet> input, size_t width, size_t height )
 {
     size_t dataSize = height * (width*4);
-    _rgb24 = _pf->Get( dataSize );
+    _rgb24 = _pf->Get( dataSize + DEFAULT_PADDING );
     _rgb24->SetDataSize( dataSize );
 
     uint8_t* dst = _rgb24->Map();

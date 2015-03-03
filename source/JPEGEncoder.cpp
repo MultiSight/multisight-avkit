@@ -17,6 +17,7 @@ using namespace AVKit;
 using namespace XSDK;
 
 static const size_t DEFAULT_JPEG_ENCODE_BUFFER_SIZE = (1024*1024);
+static const size_t DEFAULT_PADDING = 16;
 
 JPEGEncoder::JPEGEncoder( const struct CodecOptions& options, int encodeAttempts ) :
     _codec( avcodec_find_encoder( CODEC_ID_MJPEG ) ),
@@ -83,7 +84,7 @@ void JPEGEncoder::EncodeYUV420P( XIRef<Packet> input )
     AVFrame frame;
     avcodec_get_frame_defaults( &frame );
 
-    _output = _pf->Get( DEFAULT_JPEG_ENCODE_BUFFER_SIZE );
+    _output = _pf->Get( DEFAULT_JPEG_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
 
     uint8_t* pic = input->Map();
 
@@ -107,9 +108,6 @@ void JPEGEncoder::EncodeYUV420P( XIRef<Packet> input )
         pkt.data = _output->Map();
         pkt.size = _output->GetBufferSize();
 
-        printf("pkt.data = %x\n",pkt.data);
-        printf("pkt.size = %u\n",pkt.size);
-
         if( avcodec_encode_video2( _context,
                                    &pkt,
                                    &frame,
@@ -117,10 +115,6 @@ void JPEGEncoder::EncodeYUV420P( XIRef<Packet> input )
             X_THROW(("Error while encoding."));
 
         attempt++;
-
-        printf(" pkt.data = %x\n",pkt.data);
-        printf(" pkt.size = %u\n",pkt.size);
-
     } while( gotPacket == 0 && (attempt < _encodeAttempts) );
 
     _output->SetDataSize( pkt.size );

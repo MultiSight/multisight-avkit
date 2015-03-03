@@ -16,6 +16,8 @@
 using namespace AVKit;
 using namespace XSDK;
 
+static const size_t DEFAULT_PADDING = 16;
+
 H264MP4ToAnnexB::H264MP4ToAnnexB( AVDeMuxer& deMuxer ) :
     _bsfc( av_bitstream_filter_init( "h264_mp4toannexb" ) ),
     _codec( deMuxer._context->streams[deMuxer._videoStreamIndex]->codec ),
@@ -73,7 +75,7 @@ void H264MP4ToAnnexB::Transform( XIRef<Packet> input, bool keyFrame )
 
 XIRef<Packet> H264MP4ToAnnexB::Get()
 {
-    XIRef<Packet> output = _pf->Get( _filteredPacket.size );
+    XIRef<Packet> output = _pf->Get( _filteredPacket.size + DEFAULT_PADDING );
     memcpy( output->Map(), _filteredPacket.data, _filteredPacket.size );
     output->SetDataSize( _filteredPacket.size );
 

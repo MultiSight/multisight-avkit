@@ -24,6 +24,7 @@ using namespace XSDK;
 using namespace std;
 
 static const size_t DEFAULT_EXTRADATA_BUFFER_SIZE = (1024*256);
+static const size_t DEFAULT_PADDING = 16;
 
 AVDeMuxer::AVDeMuxer( const XString& fileName, bool annexBFilter ) :
     _fileName( fileName ),
@@ -196,13 +197,13 @@ XIRef<Packet> AVDeMuxer::Get()
 
     if( _bsfc && (_deMuxPkt.stream_index == _videoStreamIndex) )
     {
-        pkt = _pf->Get( (size_t)_filterPkt.size );
+        pkt = _pf->Get( (size_t)_filterPkt.size + DEFAULT_PADDING );
         pkt->SetDataSize( _filterPkt.size );
         memcpy( pkt->Map(), _filterPkt.data, _filterPkt.size );
     }
     else
     {
-        pkt = _pf->Get( (size_t)_deMuxPkt.size );
+        pkt = _pf->Get( (size_t)_deMuxPkt.size + DEFAULT_PADDING );
         pkt->SetDataSize( _deMuxPkt.size );
         memcpy( pkt->Map(), _deMuxPkt.data, _deMuxPkt.size );
     }

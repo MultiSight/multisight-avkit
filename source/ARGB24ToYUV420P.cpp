@@ -17,6 +17,8 @@
 using namespace AVKit;
 using namespace XSDK;
 
+static const int DEFAULT_PADDING = 16;
+
 ARGB24ToYUV420P::ARGB24ToYUV420P() :
     _yuv420(),
     _pf( new PacketFactoryDefault() )
@@ -30,7 +32,7 @@ ARGB24ToYUV420P::~ARGB24ToYUV420P() throw()
 void ARGB24ToYUV420P::Transform( XIRef<Packet> pkt, size_t width, size_t height )
 {
     size_t pictureSize = width * height * 1.5;
-    _yuv420 = _pf->Get( pictureSize );
+    _yuv420 = _pf->Get( pictureSize + DEFAULT_PADDING );
     _yuv420->SetDataSize( pictureSize );
 
     uint8_t* yuv = _yuv420->Map();

@@ -193,7 +193,7 @@ XIRef<Packet> H264Decoder::Get()
         _outputHeight = _context->height;
 
     size_t pictureSize = _outputWidth * _outputHeight * 1.5;
-    XIRef<Packet> pkt = _pf->Get( pictureSize );
+    XIRef<Packet> pkt = _pf->Get( pictureSize + DEFAULT_PADDING );
     pkt->SetDataSize( pictureSize );
 
     if( _scaler == NULL )

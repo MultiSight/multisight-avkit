@@ -171,7 +171,7 @@ void H264Encoder::EncodeYUV420P( XIRef<Packet> input, FrameType type )
         else frame.pict_type = AV_PICTURE_TYPE_P;
     }
 
-    _output = _pf->Get( DEFAULT_ENCODE_BUFFER_SIZE );
+    _output = _pf->Get( DEFAULT_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
 
     int attempts = 0;
     int gotPacket = 0;
