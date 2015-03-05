@@ -15,6 +15,8 @@
 #include "AVKit/Options.h"
 #include "AVKit/FrameTypes.h"
 #include "AVKit/Encoder.h"
+#include "AVKit/Packet.h"
+#include "AVKit/PacketFactory.h"
 #include "XSDK/XMemory.h"
 
 extern "C"
@@ -37,16 +39,11 @@ public:
 
     X_API virtual ~H264Encoder() throw();
 
-    /// Encode the YUV420P image pointed to by pic into an H.264 frame, writing the output frame
-    /// to the memory pointed to by output.
-    X_API virtual size_t EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
-                                        FrameType type = FRAME_TYPE_AUTO_GOP );
+    X_API void SetPacketFactory( XIRef<PacketFactory> pf ) { _pf = pf; }
 
-    /// A convenience method that wraps the functionaliy provided above but takes and returns
-    /// XMemory objects. (note: because this method allocates memory, it is not quite as efficient
-    /// as the above method).
-    X_API virtual XIRef<XSDK::XMemory> EncodeYUV420P( XIRef<XSDK::XMemory> pic,
-                                                      FrameType type = FRAME_TYPE_AUTO_GOP );
+    X_API virtual void EncodeYUV420P( XIRef<Packet> input, FrameType type = FRAME_TYPE_AUTO_GOP );
+
+    X_API virtual XIRef<Packet> Get();
 
     X_API virtual bool LastWasKey() const { return _lastWasKey; }
 
@@ -67,6 +64,8 @@ private:
     XSDK::XMemory _extraData;
     bool _lastWasKey;
     bool _annexB;
+    XIRef<PacketFactory> _pf;
+    XIRef<Packet> _output;
 };
 
 }

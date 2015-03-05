@@ -1,33 +1,23 @@
 
-#ifndef _H264DecoderTest_H_
-#define _H264DecoderTest_H_
+#include "framework.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-
-class H264DecoderTest : public CppUnit::TestFixture
+class H264DecoderTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(H264DecoderTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestInputDimensions);
-        CPPUNIT_TEST(TestOutputDimensions);
-        CPPUNIT_TEST(TestDecodeGOP);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(H264DecoderTest);
+        TEST(H264DecoderTest::TestConstructor);
+        TEST(H264DecoderTest::TestInputDimensions);
+        TEST(H264DecoderTest::TestOutputDimensions);
+        TEST(H264DecoderTest::TestDecodeGOP);
+    TEST_SUITE_END();
 
-    virtual ~H264DecoderTest() throw()
-    {}
+    virtual ~H264DecoderTest() throw() {}
 
-    void setUp();
-    void tearDown();
-
-protected:
+    void setup();
+    void teardown();
 
     void TestConstructor();
     void TestInputDimensions();
     void TestOutputDimensions();
     void TestDecodeGOP();
 };
-
-#endif
-

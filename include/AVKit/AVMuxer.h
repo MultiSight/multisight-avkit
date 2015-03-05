@@ -13,7 +13,8 @@
 #define __AVKit_AVMuxer_h
 
 #include "AVKit/Options.h"
-
+#include "AVKit/Packet.h"
+#include "AVKit/PacketFactory.h"
 #include "XSDK/XMemory.h"
 
 extern "C"
@@ -40,12 +41,13 @@ public:
 
     X_API virtual ~AVMuxer() throw();
 
+    X_API void SetPacketFactory( XIRef<PacketFactory> pf ) { _pf = pf; }
+
     X_API XSDK::XString GetFileName() const;
 
     X_API void SetExtraData( XIRef<XSDK::XMemory> extraData );
 
-    X_API void WriteVideoFrame( uint8_t* data, size_t size, bool keyFrame );
-    X_API void WriteVideoFrame( XIRef<XSDK::XMemory> frame, bool keyFrame );
+    X_API void WriteVideoPacket( XIRef<Packet> input, bool keyFrame );
 
     X_API void Flush();
 
@@ -74,6 +76,7 @@ private:
     int64_t _numVideoFramesWritten;
     bool _isTS;       // true if our container type is mpeg2ts
     int64_t _fileNum; // the number of files made (really only useful for mpeg2ts)o
+    XIRef<PacketFactory> _pf;
 };
 
 }

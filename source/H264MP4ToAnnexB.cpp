@@ -16,10 +16,13 @@
 using namespace AVKit;
 using namespace XSDK;
 
+static const size_t DEFAULT_PADDING = 16;
+
 H264MP4ToAnnexB::H264MP4ToAnnexB( AVDeMuxer& deMuxer ) :
     _bsfc( av_bitstream_filter_init( "h264_mp4toannexb" ) ),
     _codec( deMuxer._context->streams[deMuxer._videoStreamIndex]->codec ),
-    _filteredPacket()
+    _filteredPacket(),
+    _pf( new PacketFactoryDefault )
 {
     if( !_bsfc )
         X_THROW(("Unable to initialize h264_mp4toannexb bitstream filter."));
@@ -35,12 +38,12 @@ H264MP4ToAnnexB::~H264MP4ToAnnexB() throw()
     av_bitstream_filter_close( _bsfc );
 }
 
-void H264MP4ToAnnexB::Transform( uint8_t* src, size_t srcSize, bool keyFrame )
+void H264MP4ToAnnexB::Transform( XIRef<Packet> input, bool keyFrame )
 {
     AVPacket inputPacket;
     av_init_packet( &inputPacket );
-    inputPacket.data = src;
-    inputPacket.size = srcSize;
+    inputPacket.data = input->Map();
+    inputPacket.size = input->GetDataSize();
 
     _FreeFilteredPacket();
 
@@ -70,27 +73,13 @@ void H264MP4ToAnnexB::Transform( uint8_t* src, size_t srcSize, bool keyFrame )
     }
 }
 
-void H264MP4ToAnnexB::Transform( XIRef<XMemory> src, bool keyFrame )
+XIRef<Packet> H264MP4ToAnnexB::Get()
 {
-    Transform( src->Map(), src->GetDataSize(), keyFrame );
-}
+    XIRef<Packet> output = _pf->Get( _filteredPacket.size + DEFAULT_PADDING );
+    memcpy( output->Map(), _filteredPacket.data, _filteredPacket.size );
+    output->SetDataSize( _filteredPacket.size );
 
-size_t H264MP4ToAnnexB::GetAnnexBSize() const
-{
-    return _filteredPacket.size;
-}
-
-void H264MP4ToAnnexB::GetAnnexB( uint8_t* dest ) const
-{
-    memcpy( dest, _filteredPacket.data, _filteredPacket.size );
-}
-
-XIRef<XMemory> H264MP4ToAnnexB::GetAnnexB() const
-{
-    XIRef<XMemory> buffer = new XMemory;
-    uint8_t* dest = &buffer->Extend( _filteredPacket.size );
-    GetAnnexB( dest );
-    return buffer;
+    return output;
 }
 
 void H264MP4ToAnnexB::_FreeFilteredPacket()

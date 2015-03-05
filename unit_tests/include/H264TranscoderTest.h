@@ -1,28 +1,19 @@
 
-#ifndef _H264TranscoderTest_H_
-#define _H264TranscoderTest_H_
+#include "framework.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "XSDK/XMemory.h"
-
-class H264TranscoderTest : public CppUnit::TestFixture
+class H264TranscoderTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(H264TranscoderTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestBasic);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(H264TranscoderTest);
+        TEST(H264TranscoderTest::TestConstructor);
+        TEST(H264TranscoderTest::TestBasic);
+    TEST_SUITE_END();
 
     virtual ~H264TranscoderTest() throw() {}
 
-    void setUp();
-    void tearDown();
+    void setup();
+    void teardown();
 
-protected:
     void TestConstructor();
     void TestBasic();
 };
-
-#endif
-

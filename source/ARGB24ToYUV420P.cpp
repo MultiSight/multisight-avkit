@@ -17,8 +17,11 @@
 using namespace AVKit;
 using namespace XSDK;
 
+static const int DEFAULT_PADDING = 16;
+
 ARGB24ToYUV420P::ARGB24ToYUV420P() :
-    _yuv420()
+    _yuv420(),
+    _pf( new PacketFactoryDefault() )
 {
 }
 
@@ -26,11 +29,14 @@ ARGB24ToYUV420P::~ARGB24ToYUV420P() throw()
 {
 }
 
-void ARGB24ToYUV420P::Transform( uint8_t* src, size_t width, size_t height )
+void ARGB24ToYUV420P::Transform( XIRef<Packet> pkt, size_t width, size_t height )
 {
-    _yuv420 = new XMemory;
+    size_t pictureSize = width * height * 1.5;
+    _yuv420 = _pf->Get( pictureSize + DEFAULT_PADDING );
+    _yuv420->SetDataSize( pictureSize );
 
-    uint8_t* yuv = &_yuv420->Extend( width * height * 1.5 );
+    uint8_t* yuv = _yuv420->Map();
+    uint8_t* src = pkt->Map();
 
     /// Cairo ARGB24 buffers are stored "native endian" as 8 bit unsigned integer quantities in the order
     /// ARGB.
@@ -91,22 +97,7 @@ void ARGB24ToYUV420P::Transform( uint8_t* src, size_t width, size_t height )
     }
 }
 
-void ARGB24ToYUV420P::Transform( XIRef<XMemory> src, size_t width, size_t height )
+XIRef<Packet> ARGB24ToYUV420P::Get()
 {
-    Transform( src->Map(), width, height );
-}
-
-size_t ARGB24ToYUV420P::GetYUV420PSize() const
-{
-    return _yuv420->GetDataSize();
-}
-
-void ARGB24ToYUV420P::GetYUV420P( uint8_t* dest ) const
-{
-    memcpy( dest, _yuv420->Map(), _yuv420->GetDataSize() );
-}
-
-XIRef<XSDK::XMemory> ARGB24ToYUV420P::GetYUV420P() const
-{
-    return _yuv420->Clone();
+    return _yuv420;
 }

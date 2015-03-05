@@ -8,7 +8,6 @@
 #include "AVKit/H264Transcoder.h"
 #include "AVKit/Locky.h"
 #include "AVKit/Options.h"
-#include "XSDK/XRef.h"
 #include "XSDK/XMemory.h"
 #include "XSDK/XPath.h"
 
@@ -19,11 +18,10 @@ using namespace std;
 using namespace XSDK;
 using namespace AVKit;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(H264TranscoderTest);
+REGISTER_TEST_FIXTURE(H264TranscoderTest);
 
-void H264TranscoderTest::setUp()
+void H264TranscoderTest::setup()
 {
-    av_register_all();
     Locky::RegisterFFMPEG();
 
     struct CodecOptions options;
@@ -43,14 +41,15 @@ void H264TranscoderTest::setUp()
         for( int i = 0; i < (NUM_FRAMES_IN_GOP * 10); i++ )
         {
             int index = i % NUM_FRAMES_IN_GOP;
-            m->WriteVideoFrame( gop[index].frame, gop[index].frameSize, ((i % 15) == 0) ? true : false );
+            XIRef<Packet> pkt = new Packet( gop[index].frame, gop[index].frameSize, false );
+            m->WriteVideoPacket( pkt, ((i % 15) == 0) ? true : false );
         }
 
         m->FinalizeFile();
     }
 }
 
-void H264TranscoderTest::tearDown()
+void H264TranscoderTest::teardown()
 {
     Locky::UnregisterFFMPEG();
 
@@ -59,17 +58,11 @@ void H264TranscoderTest::tearDown()
 
 void H264TranscoderTest::TestConstructor()
 {
-    printf("H264TranscoderTest::TestConstructor()\n");
-    fflush(stdout);
-
     H264Transcoder transcoder( 1, 30, 1, 15, 1.0 );
 }
 
 void H264TranscoderTest::TestBasic()
 {
-    printf("H264TranscoderTest::TestBasic()\n");
-    fflush(stdout);
-
     AVDeMuxer dm( "big.mp4" );
     H264Decoder decoder( GetFastH264DecoderOptions() );
     H264Encoder encoder( GetFastH264EncoderOptions( 1000000, 640, 360, 15, 1, 15 ), false );
@@ -87,20 +80,19 @@ void H264TranscoderTest::TestBasic()
     {
         if( transcoder.Decode( dm, decoder ) )
         {
-            transcoder.EncodeYUV420PAndMux( encoder, muxer, decoder.MakeYUV420P() );
+            transcoder.EncodeYUV420PAndMux( encoder, muxer, decoder.Get() );
         }
     }
 
     muxer.FinalizeFile();
 
-    CPPUNIT_ASSERT( XPath::Exists( "small.mp4" ) );
+    UT_ASSERT( XPath::Exists( "small.mp4" ) );
 
     struct StreamStatistics outputStats = AVDeMuxer::GetVideoStreamStatistics( "small.mp4" );
 
-    CPPUNIT_ASSERT( outputStats.frameRate.Value() == 15 );
-    CPPUNIT_ASSERT( outputStats.gopSize.Value() == 15 );
-    CPPUNIT_ASSERT( outputStats.numFrames.Value() == 75 );
+    UT_ASSERT( outputStats.frameRate.Value() == 15 );
+    UT_ASSERT( outputStats.gopSize.Value() == 15 );
+    UT_ASSERT( outputStats.numFrames.Value() == 75 );
 
     remove( "small.mp4" );
 }
-

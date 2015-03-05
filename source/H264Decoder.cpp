@@ -31,7 +31,8 @@ H264Decoder::H264Decoder( const struct CodecOptions& options, int decodeAttempts
     _scaler( NULL ),
     _outputWidth( 0 ),
     _outputHeight( 0 ),
-    _decodeAttempts( decodeAttempts )
+    _decodeAttempts( decodeAttempts ),
+    _pf( new PacketFactoryDefault() )
 {
     if( !_codec )
         X_THROW(( "Failed to find H264 decoder." ));
@@ -66,7 +67,8 @@ H264Decoder::H264Decoder( AVDeMuxer& deMuxer, const struct CodecOptions& options
     _scaler( NULL ),
     _outputWidth( 0 ),
     _outputHeight( 0 ),
-    _decodeAttempts( decodeAttempts )
+    _decodeAttempts( decodeAttempts ),
+    _pf( new PacketFactoryDefault )
 {
     if( !_codec )
         X_THROW(( "Failed to find H264 decoder." ));
@@ -108,12 +110,12 @@ H264Decoder::~H264Decoder() throw()
     }
 }
 
-void H264Decoder::Decode( uint8_t* frame, size_t frameSize )
+void H264Decoder::Decode( XIRef<Packet> frame )
 {
     AVPacket inputPacket;
     av_init_packet( &inputPacket );
-    inputPacket.data = frame;
-    inputPacket.size = frameSize;
+    inputPacket.data = frame->Map();
+    inputPacket.size = frame->GetDataSize();
 
     int gotPicture = 0;
     int ret = 0;
@@ -138,11 +140,6 @@ void H264Decoder::Decode( uint8_t* frame, size_t frameSize )
 
     if( gotPicture < 1 )
         X_THROW(( "Unable to decode frame." ));
-}
-
-void H264Decoder::Decode( XIRef<XSDK::XMemory> frame )
-{
-    Decode( frame->Map(), frame->GetDataSize() );
 }
 
 uint16_t H264Decoder::GetInputWidth() const
@@ -187,21 +184,17 @@ uint16_t H264Decoder::GetOutputHeight() const
     return _outputHeight;
 }
 
-size_t H264Decoder::GetYUV420PSize() const
-{
-    if( (_outputWidth == 0) || (_outputHeight == 0) )
-        return _context->width * _context->height * 1.5;
-
-    return _outputWidth * _outputHeight * 1.5;
-}
-
-void H264Decoder::MakeYUV420P( uint8_t* dest )
+XIRef<Packet> H264Decoder::Get()
 {
     if( _outputWidth == 0 )
         _outputWidth = _context->width;
 
     if( _outputHeight == 0 )
         _outputHeight = _context->height;
+
+    size_t pictureSize = _outputWidth * _outputHeight * 1.5;
+    XIRef<Packet> pkt = _pf->Get( pictureSize + DEFAULT_PADDING );
+    pkt->SetDataSize( pictureSize );
 
     if( _scaler == NULL )
     {
@@ -221,6 +214,8 @@ void H264Decoder::MakeYUV420P( uint8_t* dest )
                       "(input_width=%u,input_height=%u,output_width=%u,output_height=%u).",
                       _context->width, _context->height, _outputWidth, _outputHeight ));
     }
+
+    uint8_t* dest = pkt->Map();
 
     AVPicture pict;
     pict.data[0] = dest;
@@ -242,15 +237,8 @@ void H264Decoder::MakeYUV420P( uint8_t* dest )
                          pict.linesize );
     if( ret <= 0 )
         X_THROW(( "Unable to create YUV420P image." ));
-}
 
-XIRef<XMemory> H264Decoder::MakeYUV420P()
-{
-    size_t pictureSize = GetYUV420PSize();
-    XIRef<XMemory> buffer = new XMemory( pictureSize + DEFAULT_PADDING );
-    uint8_t* p = &buffer->Extend( pictureSize );
-    MakeYUV420P( p );
-    return buffer;
+    return pkt;
 }
 
 void H264Decoder::_DestroyScaler()

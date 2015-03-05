@@ -35,7 +35,9 @@ H264Encoder::H264Encoder( const struct CodecOptions& options,
     _encodeAttempts( encodeAttempts ),
     _extraData( DEFAULT_EXTRADATA_BUFFER_SIZE ),
     _lastWasKey( false ),
-    _annexB( annexB )
+    _annexB( annexB ),
+    _pf( new PacketFactoryDefault() ),
+    _output()
 {
     if( !_codec )
         X_THROW(("Unable to locate H264 codec."));
@@ -141,11 +143,12 @@ H264Encoder::~H264Encoder() throw()
     av_free( _context );
 }
 
-size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize,
-                                   FrameType type )
+void H264Encoder::EncodeYUV420P( XIRef<Packet> input, FrameType type )
 {
     AVFrame frame;
     avcodec_get_frame_defaults( &frame );
+
+    uint8_t* pic = input->Map();
 
     frame.data[0] = pic;
     pic += (_context->width * _context->height);
@@ -168,13 +171,15 @@ size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
         else frame.pict_type = AV_PICTURE_TYPE_P;
     }
 
+    _output = _pf->Get( DEFAULT_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
+
     int attempts = 0;
     int gotPacket = 0;
     AVPacket pkt;
 
     do
     {
-        uint8_t* dest = output;
+        uint8_t* dest = _output->Map();
 
         if( _annexB )
         {
@@ -184,7 +189,7 @@ size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
 
         av_init_packet( &pkt );
         pkt.data = dest;
-        pkt.size = (_annexB) ? outputSize - _context->extradata_size : outputSize;
+        pkt.size = (_annexB) ? _output->GetBufferSize() - _context->extradata_size : _output->GetBufferSize();
 
         if( avcodec_encode_video2( _context,
                                    &pkt,
@@ -197,25 +202,18 @@ size_t H264Encoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
     } while( gotPacket == 0 && (attempts < _encodeAttempts) );
 
     if( pkt.flags & AV_PKT_FLAG_KEY )
+    {
         _lastWasKey = true;
+        _output->SetKey( true );
+    }
     else _lastWasKey = false;
 
-    return (_annexB) ? pkt.size + _context->extradata_size : pkt.size;
+    _output->SetDataSize( (_annexB) ? pkt.size + _context->extradata_size : pkt.size );
 }
 
-XIRef<XMemory> H264Encoder::EncodeYUV420P( XIRef<XMemory> pic,
-                                           FrameType type )
+XIRef<Packet> H264Encoder::Get()
 {
-    XIRef<XMemory> frame = new XMemory( DEFAULT_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
-
-    uint8_t* p = &frame->Extend( DEFAULT_ENCODE_BUFFER_SIZE );
-
-    size_t outputSize = EncodeYUV420P( pic->Map(),
-                                       frame->Map(),
-                                       frame->GetDataSize(),
-                                       type );
-    frame->ResizeData( outputSize );
-    return frame;
+    return _output;
 }
 
 struct CodecOptions H264Encoder::GetOptions() const

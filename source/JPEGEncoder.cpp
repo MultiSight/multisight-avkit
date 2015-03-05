@@ -16,11 +16,16 @@
 using namespace AVKit;
 using namespace XSDK;
 
+static const size_t DEFAULT_JPEG_ENCODE_BUFFER_SIZE = (1024*1024);
+static const size_t DEFAULT_PADDING = 16;
+
 JPEGEncoder::JPEGEncoder( const struct CodecOptions& options, int encodeAttempts ) :
     _codec( avcodec_find_encoder( CODEC_ID_MJPEG ) ),
     _context( avcodec_alloc_context3( _codec ) ),
     _options( options ),
-    _encodeAttempts( encodeAttempts )
+    _encodeAttempts( encodeAttempts ),
+    _output(),
+    _pf( new PacketFactoryDefault() )
 {
     if( !_codec )
         X_THROW(("Unable to locate MJPEG codec."));
@@ -74,10 +79,14 @@ JPEGEncoder::~JPEGEncoder() throw()
     av_free( _context );
 }
 
-size_t JPEGEncoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputSize )
+void JPEGEncoder::EncodeYUV420P( XIRef<Packet> input )
 {
     AVFrame frame;
     avcodec_get_frame_defaults( &frame );
+
+    _output = _pf->Get( DEFAULT_JPEG_ENCODE_BUFFER_SIZE + DEFAULT_PADDING );
+
+    uint8_t* pic = input->Map();
 
     frame.data[0] = pic;
     pic += (_context->width * _context->height);
@@ -96,8 +105,8 @@ size_t JPEGEncoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
     do
     {
         av_init_packet( &pkt );
-        pkt.data = output;
-        pkt.size = outputSize;
+        pkt.data = _output->Map();
+        pkt.size = _output->GetBufferSize();
 
         if( avcodec_encode_video2( _context,
                                    &pkt,
@@ -106,22 +115,17 @@ size_t JPEGEncoder::EncodeYUV420P( uint8_t* pic, uint8_t* output, size_t outputS
             X_THROW(("Error while encoding."));
 
         attempt++;
-
     } while( gotPacket == 0 && (attempt < _encodeAttempts) );
 
-    return pkt.size;
+    _output->SetDataSize( pkt.size );
 }
 
-XIRef<XMemory> JPEGEncoder::EncodeYUV420P( XIRef<XMemory> pic )
+XIRef<Packet> JPEGEncoder::Get()
 {
-    XIRef<XMemory> frame = new XMemory;
-    uint8_t* p = &frame->Extend( (1024*1024) );
-    size_t outputSize = EncodeYUV420P( pic->Map(), p, frame->GetDataSize() );
-    frame->ResizeData( outputSize );
-    return frame;
+    return _output;
 }
 
-void JPEGEncoder::WriteJPEGFile( const XSDK::XString& fileName, XIRef<XSDK::XMemory> jpeg )
+void JPEGEncoder::WriteJPEGFile( const XSDK::XString& fileName, XIRef<Packet> jpeg )
 {
     FILE* outFile = fopen( fileName.c_str(), "wb" );
     if( !outFile )

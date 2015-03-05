@@ -7,7 +7,6 @@
 #include "AVKit/JPEGEncoder.h"
 #include "AVKit/Locky.h"
 #include "AVKit/Options.h"
-#include "XSDK/XRef.h"
 #include "XSDK/XMemory.h"
 
 #include "gop.c"
@@ -17,36 +16,26 @@ using namespace std;
 using namespace XSDK;
 using namespace AVKit;
 
-CPPUNIT_TEST_SUITE_REGISTRATION(AVMuxerTest);
+REGISTER_TEST_FIXTURE(AVMuxerTest);
 
-void AVMuxerTest::setUp()
+void AVMuxerTest::setup()
 {
-    av_register_all();
     Locky::RegisterFFMPEG();
-
-    // pic_0 comes from the above included file pic.c
-    _pic = new XMemory;
-    memcpy( &_pic->Extend( pic_0_len ), pic_0, pic_0_len );
 }
 
-void AVMuxerTest::tearDown()
+void AVMuxerTest::teardown()
 {
     Locky::UnregisterFFMPEG();
 }
 
 void AVMuxerTest::TestConstructor()
 {
-    printf("AVMuxerTest::TestConstructor()\n");
-    fflush(stdout);
-
-    CPPUNIT_ASSERT_NO_THROW( XRef<AVMuxer> c = new AVMuxer( GetFastH264EncoderOptions( 500000, 1280, 720, 15, 1, 15 ), "foo.mp4", AVMuxer::OUTPUT_LOCATION_BUFFER ) );
+    XRef<AVMuxer> c;
+    UT_ASSERT_NO_THROW( c = new AVMuxer( GetFastH264EncoderOptions( 500000, 1280, 720, 15, 1, 15 ), "foo.mp4", AVMuxer::OUTPUT_LOCATION_BUFFER ) );
 }
 
 void AVMuxerTest::TestMP4()
 {
-    printf("AVMuxerTest::TestMP4()\n");
-    fflush(stdout);
-
     XRef<H264Decoder> d = new H264Decoder( GetFastH264DecoderOptions() );
     d->SetOutputWidth( 640 );
     d->SetOutputHeight( 360 );
@@ -61,20 +50,17 @@ void AVMuxerTest::TestMP4()
     {
         int index = i % NUM_FRAMES_IN_GOP;
 
-        d->Decode( gop[index].frame,
-                   gop[index].frameSize );
-
-        c->WriteVideoFrame( e->EncodeYUV420P( d->MakeYUV420P() ), ((i % 15) == 0) ? true : false );
+        XIRef<Packet> pkt = new Packet( gop[index].frame, gop[index].frameSize, false );
+        d->Decode( pkt );
+        e->EncodeYUV420P( d->Get() );
+        c->WriteVideoPacket( e->Get(), ((i % 15) == 0) ? true : false );
     }
 
     c->FinalizeFile();
 }
 
-void AVMuxerTest::TestReContainerize()
+void AVMuxerTest::TestRecontainerize()
 {
-    printf("AVMuxerTest::TestReContainerize()\n");
-    fflush(stdout);
-
     struct CodecOptions options;
 
     options.gop_size = 15;
@@ -91,8 +77,8 @@ void AVMuxerTest::TestReContainerize()
     for( int i = 0; i < NUM_FRAMES_IN_GOP; i++ )
     {
         int index = i % NUM_FRAMES_IN_GOP;
-
-        c->WriteVideoFrame( gop[index].frame, gop[index].frameSize, ((i % 15) == 0) ? true : false );
+        XIRef<Packet> pkt = new Packet( gop[index].frame, gop[index].frameSize, false );
+        c->WriteVideoPacket( pkt, ((i % 15) == 0) ? true : false );
     }
 
     c->FinalizeFile();

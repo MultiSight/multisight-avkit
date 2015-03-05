@@ -1,30 +1,22 @@
 
-#ifndef _JPEGEncoderTest_H_
-#define _JPEGEncoderTest_H_
+#include "framework.h"
+#include "AVKit/Packet.h"
 
-#include <cppunit/extensions/HelperMacros.h>
-#include "XSDK/XMemory.h"
-
-class JPEGEncoderTest : public CppUnit::TestFixture
+class JPEGEncoderTest : public test_fixture
 {
-    CPPUNIT_TEST_SUITE(JPEGEncoderTest);
-        CPPUNIT_TEST(TestConstructor);
-        CPPUNIT_TEST(TestEncode);
-    CPPUNIT_TEST_SUITE_END();
-
 public:
+    TEST_SUITE(JPEGEncoderTest);
+        TEST(JPEGEncoderTest::TestConstructor);
+        TEST(JPEGEncoderTest::TestEncode);
+    TEST_SUITE_END();
 
     virtual ~JPEGEncoderTest() throw() {}
 
-    void setUp();
-    void tearDown();
+    void setup();
+    void teardown();
 
-protected:
     void TestConstructor();
     void TestEncode();
 private:
-    XIRef<XSDK::XMemory> _pic;
+    XIRef<AVKit::Packet> _pic;
 };
-
-#endif
-

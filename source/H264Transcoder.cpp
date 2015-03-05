@@ -33,12 +33,14 @@ H264Transcoder::H264Transcoder( int inputTimeBaseNum, int inputTimeBaseDen,
 
 void H264Transcoder::EncodeYUV420PAndMux( H264Encoder& encoder,
                                           AVMuxer& muxer,
-                                          XIRef<XSDK::XMemory> pic,
+                                          XIRef<Packet> pic,
                                           AVKit::FrameType type )
 {
-    XIRef<XSDK::XMemory> encodeBuffer = encoder.EncodeYUV420P( pic, type );
+    encoder.EncodeYUV420P( pic, type );
 
-    muxer.WriteVideoFrame( encodeBuffer, encoder.LastWasKey() );
+    XIRef<Packet> encodeBuffer = encoder.Get();
+
+    muxer.WriteVideoPacket( encodeBuffer, encoder.LastWasKey() );
 }
 
 int64_t H264Transcoder::ComputeNumOutputFrames( int64_t numInputFrames,

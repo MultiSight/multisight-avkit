@@ -18,6 +18,7 @@
 #include "AVKit/AVMuxer.h"
 #include "AVKit/Options.h"
 #include "AVKit/FrameTypes.h"
+#include "AVKit/Packet.h"
 
 namespace AVKit
 {
@@ -50,7 +51,7 @@ public:
                     _step += _outputFramesPerInputFrame;
 
                     if( _step > 1.0 || !_decodeSkipping )
-                        decoder.Decode( avDeMuxer.GetFrame() );
+                        decoder.Decode( avDeMuxer.Get() );
                 }
             }
         }
@@ -62,7 +63,7 @@ public:
 
     X_API void EncodeYUV420PAndMux( H264Encoder& encoder,
                                     AVMuxer& muxer,
-                                    XIRef<XSDK::XMemory> pic,
+                                    XIRef<Packet> pic,
                                     AVKit::FrameType type = AVKit::FRAME_TYPE_AUTO_GOP );
 
     X_API static int64_t ComputeNumOutputFrames( int64_t numInputFrames,

@@ -24,6 +24,7 @@ using namespace XSDK;
 using namespace std;
 
 static const size_t DEFAULT_EXTRADATA_BUFFER_SIZE = (1024*256);
+static const size_t DEFAULT_PADDING = 16;
 
 AVDeMuxer::AVDeMuxer( const XString& fileName, bool annexBFilter ) :
     _fileName( fileName ),
@@ -38,7 +39,7 @@ AVDeMuxer::AVDeMuxer( const XString& fileName, bool annexBFilter ) :
     _videoStreamIndex( STREAM_TYPE_UNKNOWN ),
     _audioPrimaryStreamIndex( STREAM_TYPE_UNKNOWN ),
     _bsfc( (annexBFilter) ? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
-    _firstFrame( true )
+    _pf( new PacketFactoryDefault() )
 {
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
@@ -62,7 +63,8 @@ AVDeMuxer::AVDeMuxer( const uint8_t* buffer,
     _streamTypes(),
     _videoStreamIndex( STREAM_TYPE_UNKNOWN ),
     _audioPrimaryStreamIndex( STREAM_TYPE_UNKNOWN ),
-    _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL )
+    _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
+    _pf( new PacketFactoryDefault() )
 {
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
@@ -86,7 +88,8 @@ AVDeMuxer::AVDeMuxer( XIRef<XSDK::XMemory> buffer, bool annexBFilter ) :
     _streamTypes(),
     _videoStreamIndex( STREAM_TYPE_UNKNOWN ),
     _audioPrimaryStreamIndex( STREAM_TYPE_UNKNOWN ),
-    _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL )
+    _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
+    _pf( new PacketFactoryDefault() )
 {
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
@@ -188,37 +191,32 @@ bool AVDeMuxer::IsKey() const
     return false;
 }
 
-size_t AVDeMuxer::GetFrameSize() const
+XIRef<Packet> AVDeMuxer::Get()
 {
-    // If we have bitstream filtering turned on and the currently demuxed packet was from the
-    // video stream, use the filtered packet.
-    if( _bsfc && (_deMuxPkt.stream_index == _videoStreamIndex) )
-        return (size_t)_filterPkt.size;
-    else return (size_t)_deMuxPkt.size;
-}
+    XIRef<Packet> pkt;
 
-void AVDeMuxer::GetFrame( uint8_t* dest ) const
-{
-    // If we have bitstream filtering turned on and the currently demuxed packet was from the
-    // video stream, use the filtered packet.
     if( _bsfc && (_deMuxPkt.stream_index == _videoStreamIndex) )
-        memcpy( dest, _filterPkt.data, _filterPkt.size );
-    else memcpy( dest, _deMuxPkt.data, _deMuxPkt.size );
+    {
+        pkt = _pf->Get( (size_t)_filterPkt.size + DEFAULT_PADDING );
+        pkt->SetDataSize( _filterPkt.size );
+        memcpy( pkt->Map(), _filterPkt.data, _filterPkt.size );
+    }
+    else
+    {
+        pkt = _pf->Get( (size_t)_deMuxPkt.size + DEFAULT_PADDING );
+        pkt->SetDataSize( _deMuxPkt.size );
+        memcpy( pkt->Map(), _deMuxPkt.data, _deMuxPkt.size );
+    }
+
+    if( IsKey() )
+        pkt->SetKey( true );
+
+    return pkt;
 }
 
 AVFormatContext* AVDeMuxer::GetFormatContext() const
 {
     return _context;
-}
-
-XIRef<XMemory> AVDeMuxer::GetFrame() const
-{
-    XIRef<XMemory> frame = new XMemory;
-    if( _bsfc && (_deMuxPkt.stream_index == _videoStreamIndex) )
-        frame->ResizeData( _filterPkt.size );
-    else frame->ResizeData( _deMuxPkt.size );
-    GetFrame( frame->Map() );
-    return frame;
 }
 
 XIRef<XMemory> AVDeMuxer::LoadFile( const XSDK::XString& fileName )
@@ -287,7 +285,9 @@ struct StreamStatistics AVDeMuxer::GetVideoStreamStatistics( const XSDK::XString
             }
         }
 
-        avgFrameSize.AddSample( dm.GetFrameSize() );
+        XIRef<Packet> pkt = dm.Get();
+
+        avgFrameSize.AddSample( pkt->GetDataSize() );
 
         currentIndex++;
     }
