@@ -89,7 +89,7 @@ Packet::Packet( const Packet& obj ) :
     _ticksInSecond = obj._ticksInSecond;
 }
 
-Packet::~Packet() noexcept
+Packet::~Packet() throw()
 {
     _Clear();
 }
@@ -201,7 +201,7 @@ bool Packet::IsKey() const
     return _key;
 }
 
-void Packet::_Clear() noexcept
+void Packet::_Clear() throw()
 {
     if( _owning && _buffer )
         av_free( _buffer );
