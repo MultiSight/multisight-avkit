@@ -25,31 +25,31 @@ class Packet : public XSDK::XBaseObject
     friend class ::PacketTest;
 
 public:
-    Packet( size_t sz = 0 );
-    Packet( uint8_t* src, size_t sz, bool owning = true );
-    Packet( const Packet& obj );
+	X_API Packet(size_t sz = 0);
+	X_API Packet(uint8_t* src, size_t sz, bool owning = true);
+	X_API Packet(const Packet& obj);
 
-    virtual ~Packet() throw();
+	X_API virtual ~Packet() throw();
 
-    Packet& operator = ( const Packet& obj );
+	X_API Packet& operator = (const Packet& obj);
 
-    void Config( uint8_t* src, size_t sz, bool owning = true );
+	X_API void Config(uint8_t* src, size_t sz, bool owning = true);
 
-    uint8_t* Map() const;
+    X_API uint8_t* Map() const;
 
-    size_t GetBufferSize() const;
+	X_API size_t GetBufferSize() const;
 
-    void SetDataSize( size_t sz );
-    size_t GetDataSize() const;
+	X_API void SetDataSize(size_t sz);
+	X_API size_t GetDataSize() const;
 
-    void SetTS( uint32_t ts );
-    uint32_t GetTS() const;
+	X_API void SetTS(uint32_t ts);
+	X_API uint32_t GetTS() const;
 
-    void SetTSFreq( uint32_t freq );
-    uint32_t GetTSFreq() const;
+	X_API void SetTSFreq(uint32_t freq);
+	X_API uint32_t GetTSFreq() const;
 
-    void SetKey( bool key );
-    bool IsKey() const;
+	X_API void SetKey(bool key);
+	X_API bool IsKey() const;
 
 private:
     void _Clear() throw();
