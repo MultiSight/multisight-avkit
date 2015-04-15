@@ -35,7 +35,7 @@ public:
 
 	X_API void Config(uint8_t* src, size_t sz, bool owning = true);
 
-    X_API uint8_t* Map() const;
+        X_API uint8_t* Map() const;
 
 	X_API size_t GetBufferSize() const;
 

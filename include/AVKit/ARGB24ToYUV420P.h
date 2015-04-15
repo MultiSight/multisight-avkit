@@ -18,6 +18,12 @@
 #include "XSDK/Types.h"
 #include "XSDK/XMemory.h"
 
+extern "C"
+{
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+}
+
 namespace AVKit
 {
 
@@ -37,8 +43,15 @@ private:
     ARGB24ToYUV420P( const ARGB24ToYUV420P& obj );
     ARGB24ToYUV420P& operator = ( const ARGB24ToYUV420P& );
 
+    void _InitScaler( size_t width, size_t height );
+    void _DestroyScaler();
+
     XIRef<Packet> _yuv420;
     XIRef<PacketFactory> _pf;
+
+    SwsContext* _scaler;
+    size_t _currentWidth;
+    size_t _currentHeight;
 };
 
 }

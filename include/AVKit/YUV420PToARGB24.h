@@ -16,6 +16,12 @@
 #include "AVKit/PacketFactory.h"
 #include "XSDK/Types.h"
 
+extern "C"
+{
+#include "libavformat/avformat.h"
+#include "libswscale/swscale.h"
+}
+
 namespace AVKit
 {
 
@@ -36,8 +42,15 @@ private:
     YUV420PToARGB24( const YUV420PToARGB24& obj );
     YUV420PToARGB24& operator = ( const YUV420PToARGB24& );
 
+    void _InitScaler( size_t width, size_t height );
+    void _DestroyScaler();
+
     XIRef<Packet> _rgb24;
     XIRef<PacketFactory> _pf;
+
+    SwsContext* _scaler;
+    size_t _currentWidth;
+    size_t _currentHeight;
 };
 
 }

@@ -31,7 +31,7 @@ H264Transcoder::H264Transcoder( int inputTimeBaseNum, int inputTimeBaseDen,
     _outputFramesPerInputFrame = av_q2d( inputRational ) / (av_q2d( outputRational ) * _speed);
 }
 
-void H264Transcoder::EncodeYUV420PAndMux( H264Encoder& encoder,
+void H264Transcoder::EncodeYUV420PAndMux( Encoder& encoder,
                                           AVMuxer& muxer,
                                           XIRef<Packet> pic,
                                           AVKit::FrameType type )

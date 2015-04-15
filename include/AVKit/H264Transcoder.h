@@ -13,8 +13,8 @@
 #define __AVKit_H264Transcoder_h
 
 #include "AVKit/AVDeMuxer.h"
-#include "AVKit/H264Decoder.h"
-#include "AVKit/H264Encoder.h"
+#include "AVKit/Encoder.h"
+#include "AVKit/Decoder.h"
 #include "AVKit/AVMuxer.h"
 #include "AVKit/Options.h"
 #include "AVKit/FrameTypes.h"
@@ -34,7 +34,7 @@ public:
     // Likewise, when the output framerate is less than the input framerate, we will sometimes decode multiple
     // times before we return. In either case, after this method returns, we are ready to make an output frame.
     template<class T>
-    X_API bool Decode( T& avDeMuxer, H264Decoder& decoder )
+    X_API bool Decode( T& avDeMuxer, Decoder& decoder )
     {
         int videoStreamIndex = avDeMuxer.GetVideoStreamIndex();
 
@@ -61,7 +61,7 @@ public:
         return true;
     }
 
-    X_API void EncodeYUV420PAndMux( H264Encoder& encoder,
+    X_API void EncodeYUV420PAndMux( Encoder& encoder,
                                     AVMuxer& muxer,
                                     XIRef<Packet> pic,
                                     AVKit::FrameType type = AVKit::FRAME_TYPE_AUTO_GOP );
