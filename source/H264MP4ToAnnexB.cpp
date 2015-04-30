@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/H264MP4ToAnnexB.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/XException.h"
 
@@ -24,6 +25,9 @@ H264MP4ToAnnexB::H264MP4ToAnnexB( AVDeMuxer& deMuxer ) :
     _filteredPacket(),
     _pf( new PacketFactoryDefault )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     if( !_bsfc )
         X_THROW(("Unable to initialize h264_mp4toannexb bitstream filter."));
 

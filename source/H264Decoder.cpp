@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/H264Decoder.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/XException.h"
 
@@ -34,6 +35,9 @@ H264Decoder::H264Decoder( const struct CodecOptions& options, int decodeAttempts
     _decodeAttempts( decodeAttempts ),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     if( !_codec )
         X_THROW(( "Failed to find H264 decoder." ));
 
@@ -70,6 +74,9 @@ H264Decoder::H264Decoder( AVDeMuxer& deMuxer, const struct CodecOptions& options
     _decodeAttempts( decodeAttempts ),
     _pf( new PacketFactoryDefault )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     if( !_codec )
         X_THROW(( "Failed to find H264 decoder." ));
 

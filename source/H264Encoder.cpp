@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/H264Encoder.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/XException.h"
 
@@ -39,6 +40,9 @@ H264Encoder::H264Encoder( const struct CodecOptions& options,
     _pf( new PacketFactoryDefault() ),
     _output()
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     if( !_codec )
         X_THROW(("Unable to locate H264 codec."));
 

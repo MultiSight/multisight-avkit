@@ -30,6 +30,7 @@ class Locky
 public:
     X_API static void RegisterFFMPEG();
     X_API static void UnregisterFFMPEG();
+    X_API static bool IsRegistered();
 
 private:
     Locky();
@@ -37,6 +38,7 @@ private:
     Locky& operator = ( const Locky& obj );
 
     static int _LockyCB( void** mutex, enum AVLockOp op );
+    static bool _registered;
 };
 
 }

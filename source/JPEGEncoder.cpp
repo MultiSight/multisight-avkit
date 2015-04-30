@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/JPEGEncoder.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/XException.h"
 
@@ -27,6 +28,9 @@ JPEGEncoder::JPEGEncoder( const struct CodecOptions& options, int encodeAttempts
     _output(),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     if( !_codec )
         X_THROW(("Unable to locate MJPEG codec."));
 

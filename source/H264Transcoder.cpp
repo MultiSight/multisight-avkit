@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/H264Transcoder.h"
+#include "AVKit/Locky.h"
 
 using namespace AVKit;
 using namespace XSDK;
@@ -22,6 +23,9 @@ H264Transcoder::H264Transcoder( int inputTimeBaseNum, int inputTimeBaseDen,
     _speed( speed ),
     _decodeSkipping( decodeSkipping )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     // When the input and output framerates were specified with single integers, this was how we did it...
     // _outputFramesPerInputFrame( (((double)outputFrameRate) / (((double)inputFrameRate) * speed)) ),
 

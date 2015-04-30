@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/AVMuxer.h"
+#include "AVKit/Locky.h"
 
 extern "C"
 {
@@ -34,6 +35,9 @@ AVMuxer::AVMuxer( const struct CodecOptions& options,
     _fileNum( 0 ),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     _context = avformat_alloc_context();
     if( !_context )
         X_THROW(("Unable to allocate output format context."));

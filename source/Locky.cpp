@@ -10,21 +10,36 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/Locky.h"
-
+#include "XSDK/OS.h"
 using namespace AVKit;
 using namespace XSDK;
 using namespace std;
+
+bool Locky::_registered = false;
 
 void Locky::RegisterFFMPEG()
 {
     av_register_all();
 
     av_lockmgr_register( Locky::_LockyCB );
+    
+    _registered = true;
+    
+    FULL_MEM_BARRIER();
 }
 
 void Locky::UnregisterFFMPEG()
 {
     av_lockmgr_register( NULL );
+    
+    _registered = false;
+    
+    FULL_MEM_BARRIER();
+}
+
+bool Locky::IsRegistered()
+{
+    return Locky::_registered;
 }
 
 int Locky::_LockyCB( void** mutex, enum AVLockOp op )

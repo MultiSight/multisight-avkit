@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/YUV420PToARGB24.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/XException.h"
 #include "XSDK/XSocket.h"
@@ -26,6 +27,8 @@ YUV420PToARGB24::YUV420PToARGB24() :
     _currentWidth( 0 ),
     _currentHeight( 0 )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
 }
 
 YUV420PToARGB24::~YUV420PToARGB24() throw()

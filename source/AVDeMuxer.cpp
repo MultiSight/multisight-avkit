@@ -10,6 +10,7 @@
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include "AVKit/AVDeMuxer.h"
+#include "AVKit/Locky.h"
 
 #include "XSDK/LargeFiles.h"
 #include "XSDK/XStatistics.h"
@@ -41,6 +42,9 @@ AVDeMuxer::AVDeMuxer( const XString& fileName, bool annexBFilter ) :
     _bsfc( (annexBFilter) ? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
     _filterPkt.size = 0;
@@ -66,6 +70,9 @@ AVDeMuxer::AVDeMuxer( const uint8_t* buffer,
     _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
     _filterPkt.size = 0;
@@ -91,6 +98,9 @@ AVDeMuxer::AVDeMuxer( XIRef<XSDK::XMemory> buffer, bool annexBFilter ) :
     _bsfc( (annexBFilter)? av_bitstream_filter_init( "h264_mp4toannexb" ) : NULL ),
     _pf( new PacketFactoryDefault() )
 {
+    if( !Locky::IsRegistered() )
+        X_THROW(("Please register AVKit::Locky before using this class."));
+
     _deMuxPkt.size = 0;
     _deMuxPkt.data = NULL;
     _filterPkt.size = 0;
