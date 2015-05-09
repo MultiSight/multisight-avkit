@@ -1,7 +1,24 @@
 cmake_minimum_required(VERSION 2.8)
 project(AVKit)
 
-set(SOURCES source/ARGB24ToYUV420P.cpp
+set(SOURCES include/AVKit/ARGB24ToYUV420P.h
+            include/AVKit/AVDeMuxer.h
+            include/AVKit/AVMuxer.h
+            include/AVKit/Decoder.h
+            include/AVKit/Encoder.h
+            include/AVKit/FrameTypes.h
+            include/AVKit/H264Decoder.h
+            include/AVKit/H264Encoder.h
+            include/AVKit/H264MP4ToAnnexB.h
+            include/AVKit/H264Transcoder.h
+            include/AVKit/JPEGEncoder.h
+            include/AVKit/Locky.h
+            include/AVKit/Options.h
+            include/AVKit/Packet.h
+            include/AVKit/PacketFactory.h
+            include/AVKit/Utils.h
+            include/AVKit/YUV420PToARGB24.h
+            source/ARGB24ToYUV420P.cpp
             source/AVDeMuxer.cpp
             source/AVMuxer.cpp
             source/H264Decoder.cpp
