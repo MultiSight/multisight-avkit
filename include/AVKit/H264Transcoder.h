@@ -50,7 +50,7 @@ public:
                 {
                     _step += _outputFramesPerInputFrame;
 
-                    if( _step > 1.0 || !_decodeSkipping )
+                    if( _step >= 1.0 || !_decodeSkipping )
                         decoder.Decode( avDeMuxer.Get() );
                 }
             }

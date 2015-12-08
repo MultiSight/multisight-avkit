@@ -142,6 +142,8 @@ void AVMuxer::WriteVideoPacket( XIRef<Packet> input, bool keyFrame )
     pkt.pts = _ts;
     pkt.dts = _ts;
 
+    // convert a tick of 1 from the codecs time_base (e.g. 1/15) to the containers
+    // time_base
     _ts += av_rescale_q(1, _stream->codec->time_base, _stream->time_base);
 
     pkt.flags |= (keyFrame) ? AV_PKT_FLAG_KEY : 0;
