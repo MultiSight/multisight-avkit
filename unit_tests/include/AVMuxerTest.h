@@ -9,6 +9,8 @@ public:
         TEST(AVMuxerTest::TestConstructor);
         TEST(AVMuxerTest::TestMP4);
         TEST(AVMuxerTest::TestRecontainerize);
+        TEST(AVMuxerTest::TestBuffer);
+        TEST(AVMuxerTest::TSLeak);
     TEST_SUITE_END();
 
     virtual ~AVMuxerTest() throw() {}
@@ -19,6 +21,8 @@ public:
     void TestConstructor();
     void TestMP4();
     void TestRecontainerize();
+    void TestBuffer();
+    void TSLeak();
 private:
     XIRef<AVKit::Packet> _pic;
 };

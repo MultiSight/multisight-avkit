@@ -72,8 +72,19 @@ AVMuxer::AVMuxer( const struct CodecOptions& options,
 
 AVMuxer::~AVMuxer() throw()
 {
-    if( !_isTS && _oweTrailer )
+    if( _isTS )
+    {
+        // So, we can't write trailers when we make TS files, but if we don't call av_write_trailer() at shutdown, we
+        // leak. So, doing it here in dtor. Reopening the IO contexts is a requirement of av_write_trailer()...
+        if( _context->pb == NULL )
+            _OpenIO();
+
         av_write_trailer( _context );
+    }
+    else if( _oweTrailer )
+    {
+        av_write_trailer( _context );
+    }
 
     _CloseIO();
 

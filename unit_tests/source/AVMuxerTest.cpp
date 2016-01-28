@@ -83,3 +83,58 @@ void AVMuxerTest::TestRecontainerize()
 
     c->FinalizeFile();
 }
+
+void AVMuxerTest::TestBuffer()
+{
+    XRef<H264Decoder> d = new H264Decoder( GetFastH264DecoderOptions() );
+    d->SetOutputWidth( 640 );
+    d->SetOutputHeight( 360 );
+    XRef<H264Encoder> e = new H264Encoder( GetFastH264EncoderOptions( 250000, 640, 360, 15, 1, 15 ) );
+    XRef<AVMuxer> c = new AVMuxer( e->GetOptions(),
+                                   "foo.mp4",
+                                   AVMuxer::OUTPUT_LOCATION_BUFFER );
+
+    c->SetExtraData( e->GetExtraData() );
+
+    for( int i = 0; i < NUM_FRAMES_IN_GOP; i++ )
+    {
+        int index = i % NUM_FRAMES_IN_GOP;
+
+        XIRef<Packet> pkt = new Packet( gop[index].frame, gop[index].frameSize, false );
+        d->Decode( pkt );
+        e->EncodeYUV420P( d->Get() );
+        c->WriteVideoPacket( e->Get(), ((i % 15) == 0) ? true : false );
+    }
+
+    XIRef<XMemory> buffer = new XMemory;
+    c->FinalizeBuffer( buffer );
+}
+
+void AVMuxerTest::TSLeak()
+{
+	// avformat_write_trailer() isn't called on every file for .ts files. This caused
+	// a leak. The solution is to call it in dtor after file/buffer is done.
+
+    XRef<H264Decoder> d = new H264Decoder( GetFastH264DecoderOptions() );
+    d->SetOutputWidth( 640 );
+    d->SetOutputHeight( 360 );
+    XRef<H264Encoder> e = new H264Encoder( GetHLSH264EncoderOptions( 250000, 640, 360, 15, 1, 15 ) );
+    XRef<AVMuxer> c = new AVMuxer( e->GetOptions(),
+                                   "foo.ts",
+                                   AVMuxer::OUTPUT_LOCATION_BUFFER );
+
+    c->SetExtraData( e->GetExtraData() );
+
+    for( int i = 0; i < NUM_FRAMES_IN_GOP; i++ )
+    {
+        int index = i % NUM_FRAMES_IN_GOP;
+
+        XIRef<Packet> pkt = new Packet( gop[index].frame, gop[index].frameSize, false );
+        d->Decode( pkt );
+        e->EncodeYUV420P( d->Get() );
+        c->WriteVideoPacket( e->Get(), ((i % 15) == 0) ? true : false );
+    }
+
+    XIRef<XMemory> buffer = new XMemory;
+    c->FinalizeBuffer(buffer);
+}
