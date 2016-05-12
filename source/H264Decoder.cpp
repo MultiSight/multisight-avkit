@@ -205,6 +205,8 @@ XIRef<Packet> H264Decoder::Get()
 
     if( _scaler == NULL )
     {
+        printf("_context->pix_fmt = %x\n",_context->pix_fmt);
+        fflush(stdout);
         _scaler = sws_getContext( _context->width,
                                   _context->height,
                                   _context->pix_fmt,
