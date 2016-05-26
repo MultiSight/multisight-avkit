@@ -56,6 +56,8 @@ public:
 
     X_API void ApplyCodecOptions( const struct CodecOptions& options );
 
+    X_API int64_t GetTS() { return _ts; }
+
 private:
     AVMuxer( const AVMuxer& obj );
     AVMuxer& operator = ( const AVMuxer& obj );
