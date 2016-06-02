@@ -201,6 +201,11 @@ bool AVDeMuxer::IsKey() const
     return false;
 }
 
+int AVDeMuxer::Seek(int streamIndex, int64_t minTimestamp, int64_t timestamp, int64_t maxTimestamp, int flags)
+{
+    return avformat_seek_file(_context, streamIndex, minTimestamp, timestamp, maxTimestamp, flags);
+}
+
 XIRef<Packet> AVDeMuxer::Get()
 {
     XIRef<Packet> pkt;

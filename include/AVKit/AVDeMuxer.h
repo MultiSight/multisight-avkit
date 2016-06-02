@@ -85,6 +85,9 @@ public:
     X_API bool EndOfFile() const;
     X_API bool IsKey() const;
 
+    // Positions read head only.  You will usually call ReadFrame after calling Seek.
+    X_API int Seek(int streamIndex, int64_t minTimestamp, int64_t timestamp, int64_t maxTimestamp, int flags = 0);
+
     X_API XIRef<Packet> Get();
 
     X_API AVFormatContext* GetFormatContext() const;
