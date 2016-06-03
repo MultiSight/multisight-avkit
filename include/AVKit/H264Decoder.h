@@ -52,6 +52,8 @@ public:
 
     X_API virtual XIRef<Packet> Get();
 
+    X_API AVFrame* GetFrame() { return _frame; }
+
 private:
     H264Decoder( const H264Decoder& obj );
     H264Decoder& operator = ( const H264Decoder& );
