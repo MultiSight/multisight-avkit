@@ -92,6 +92,9 @@ public:
 
     X_API AVFormatContext* GetFormatContext() const;
 
+    X_API AVPacket& GetDemuxPacket();
+    X_API AVPacket& GetFilterPacket();
+
     X_API static XIRef<XSDK::XMemory> LoadFile( const XSDK::XString& fileName );
 
     X_API static struct StreamStatistics GetVideoStreamStatistics( const XSDK::XString& fileName );

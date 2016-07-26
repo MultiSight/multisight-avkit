@@ -234,6 +234,16 @@ AVFormatContext* AVDeMuxer::GetFormatContext() const
     return _context;
 }
 
+AVPacket& AVDeMuxer::GetDemuxPacket()
+{
+    return _deMuxPkt;
+}
+
+AVPacket& AVDeMuxer::GetFilterPacket()
+{
+    return _filterPkt;
+}
+
 XIRef<XMemory> AVDeMuxer::LoadFile( const XSDK::XString& fileName )
 {
     XIRef<XMemory> buffer = new XMemory;
