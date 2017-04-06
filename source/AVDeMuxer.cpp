@@ -445,7 +445,7 @@ void AVDeMuxer::_FreePacket()
 {
     if( _deMuxPkt.size > 0 )
     {
-        av_free( _deMuxPkt.data );
+        av_free_packet(&_deMuxPkt);
         _deMuxPkt.data = NULL;
         _deMuxPkt.size = 0;
     }
@@ -455,7 +455,7 @@ void AVDeMuxer::_FreeFilterPacket()
 {
     if( _filterPkt.size > 0 )
     {
-        av_free( _filterPkt.data );
+        av_free_packet(&_filterPkt);
         _filterPkt.data = NULL;
         _filterPkt.size = 0;
     }
