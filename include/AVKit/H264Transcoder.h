@@ -48,10 +48,20 @@ public:
 
                 if( streamIndex == videoStreamIndex )
                 {
+                    auto originalStep = _step;
+
                     _step += _outputFramesPerInputFrame;
 
-                    if( _step >= 1.0 || !_decodeSkipping )
-                        decoder.Decode( avDeMuxer.Get() );
+                    try
+                    {
+                        if( _step >= 1.0 || !_decodeSkipping )
+                            decoder.Decode( avDeMuxer.Get() );
+                    }
+                    catch(...)
+                    {
+                        _step = originalStep;
+                        throw;
+                    }
                 }
             }
         }
