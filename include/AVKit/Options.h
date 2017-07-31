@@ -22,6 +22,7 @@ struct CodecOptions
 {
     XSDK::XNullable<int> gop_size;
     XSDK::XNullable<int> bit_rate;
+    XSDK::XNullable<int> rc_max_rate;
     XSDK::XNullable<int> width;
     XSDK::XNullable<int> height;
     XSDK::XNullable<int> time_base_num;
@@ -53,7 +54,7 @@ X_API struct CodecOptions GetFastH264EncoderOptions( int bitRate, int picWidth, 
 
 X_API struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "", int initialQP = -1 );
 
-X_API struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
+X_API struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int maxRate, int bufSize, int qmin, int qmax, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath = "" );
 
 X_API const int DEFAULT_JPEG_BIT_RATE = 100000;
 X_API const int DEFAULT_JPEG_QMIN = 8;

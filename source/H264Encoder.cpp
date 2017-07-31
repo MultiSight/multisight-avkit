@@ -60,6 +60,9 @@ H264Encoder::H264Encoder( const struct CodecOptions& options,
         _context->bit_rate = _options.bit_rate.Value();
     else X_THROW(("Required option missing: bit_rate"));
 
+    if( !_options.rc_max_rate.IsNull() )
+        _context->rc_max_rate = _options.rc_max_rate.Value();
+
     if( !_options.width.IsNull() )
         _context->width = _options.width.Value();
     else X_THROW(("Required option missing: width"));
