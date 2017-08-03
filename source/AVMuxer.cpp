@@ -221,7 +221,6 @@ void AVMuxer::ApplyCodecOptions( const struct CodecOptions& options )
 
     if( !_options.bit_rate.IsNull() )
         _stream->codec->bit_rate = _options.bit_rate.Value();
-    else X_THROW(("Required option missing: bit_rate"));
 
     if( !_options.width.IsNull() )
         _stream->codec->width = _options.width.Value();

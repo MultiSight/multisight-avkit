@@ -81,11 +81,26 @@ struct CodecOptions GetHLSH264EncoderOptions( int bitRate, int picWidth, int pic
     return options;
 }
 
+struct CodecOptions GetCRFH264EncoderOptions( int crf, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen )
+{
+    struct CodecOptions options;
+    options.gop_size = gopSize;
+    options.width = picWidth;
+    options.height = picHeight;
+    options.time_base_num = timeBaseNum;
+    options.time_base_den = timeBaseDen;
+    options.thread_count = 6;
+    options.crf = crf;
+
+    return options;
+}
+
 struct CodecOptions GetTranscodeExportH264EncoderOptions( int bitRate, int maxRate, int bufSize, int qmin, int qmax, int picWidth, int picHeight, int gopSize, int timeBaseNum, int timeBaseDen, const XSDK::XString& devicePath )
 {
     struct CodecOptions options;
 
     options.gop_size = gopSize;
+
     options.bit_rate = bitRate;
     options.rc_max_rate = maxRate;
     options.rc_buffer_size = bufSize;

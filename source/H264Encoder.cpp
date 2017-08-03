@@ -58,8 +58,7 @@ H264Encoder::H264Encoder( const struct CodecOptions& options,
 
     if( !_options.bit_rate.IsNull() )
         _context->bit_rate = _options.bit_rate.Value();
-    else X_THROW(("Required option missing: bit_rate"));
-
+    
     if( !_options.rc_max_rate.IsNull() )
         _context->rc_max_rate = _options.rc_max_rate.Value();
 
@@ -129,6 +128,9 @@ H264Encoder::H264Encoder( const struct CodecOptions& options,
 
     if( !_options.x264opts.IsNull() )
         av_opt_set( _context->priv_data, "x264opts", _options.x264opts.Value().c_str(), 0 );
+
+    if( !_options.crf.IsNull() )
+        av_opt_set( _context->priv_data, "crf", XString::Format("%d",_options.crf.Value()).c_str(), AV_OPT_SEARCH_CHILDREN );
 
     // We set this here to force FFMPEG to populate the extradata field (necessary if the output stream
     // is going to be muxed into a format with a global header (for example, mp4)).
