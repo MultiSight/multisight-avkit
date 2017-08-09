@@ -91,6 +91,7 @@ struct CodecOptions GetCRFH264EncoderOptions( int crf, int picWidth, int picHeig
     options.time_base_den = timeBaseDen;
     options.thread_count = 6;
     options.crf = crf;
+    options.tune = "zerolatency";
 
     return options;
 }
